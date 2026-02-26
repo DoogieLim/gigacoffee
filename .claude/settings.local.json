@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(npm run:*)",
+      "Bash(sleep 5:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)",
+      "Bash(open:*)",
+      "Bash(head:*)",
+      "WebFetch(domain:www.starship.xyz)",
+      "WebFetch(domain:bluebottlecoffee.com)",
+      "WebFetch(domain:blog.bluebottlecoffee.com)",
+      "WebFetch(domain:img.79plus.co.kr)",
+      "Bash(source:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:rnzfohzrkxqbnqukdhgk.supabase.co)",
+      "Bash(git add:*)"
+    ]
+  }
+}

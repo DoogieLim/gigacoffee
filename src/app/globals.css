@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F5F2EB;
+  --foreground: #18170E;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-geist, Arial, sans-serif);
+  --font-display: var(--font-playfair, Georgia, serif);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* 브랜드 */
+  --color-brand: #1B3652;
+  --color-brand-hover: #152A3E;
+  --color-brand-light: #E8EFF6;
+
+  /* 커피 */
+  --color-coffee: #A8652A;
+  --color-coffee-hover: #8F5522;
+  --color-coffee-light: #FBF0E4;
+
+  /* 테크 (로봇배송) */
+  --color-tech: #5B7CF6;
+  --color-tech-light: #EEF1FE;
+
+  /* 크림/뉴트럴 */
+  --color-cream: #F5F2EB;
+  --color-cream-dark: #EDE9E0;
+  --color-ink: #18170E;
+  --color-ink-secondary: #5A5649;
+  --color-ink-muted: #9A9288;
+  --color-border-warm: #DDD7CA;
+  --color-border-light: #EEEBE4;
+  --color-dark: #111218;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
