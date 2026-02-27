@@ -1,4 +1,4 @@
-# 📚 Eatsy 프로젝트 문서
+# 📚 GigaCoffee 프로젝트 문서
 
 REST API 화 구현 관련 모든 문서를 한 곳에서 관리합니다.
 
@@ -98,7 +98,7 @@ REST API 화 구현 관련 모든 문서를 한 곳에서 관리합니다.
 ## 📊 프로젝트 개요
 
 ### 프로젝트명
-**Eatsy** - 카페 주문 관리 시스템
+**GigaCoffee** - 카페 주문 관리 시스템
 
 ### 기술 스택
 - **프레임워크**: Next.js 16
@@ -268,7 +268,7 @@ http://localhost:3000/menu
 
 | 문제 | 해결책 |
 |------|--------|
-| "permission denied for schema eatsy" | [QUICK_START.md](./QUICK_START.md#q1-permission-denied-for-schema-eatsy-에러가-나요) 참조 |
+| "permission denied for schema gigacoffee" | [QUICK_START.md](./QUICK_START.md#q1-permission-denied-for-schema-gigacoffee-에러가-나요) 참조 |
 | 이미지가 안 보여요 | [QUICK_START.md](./QUICK_START.md#q2-이미지가-안-보여요) 참조 |
 | 상품을 클릭해도 404 | [QUICK_START.md](./QUICK_START.md#q3-상품을-클릭해도-404가-나요) 참조 |
 | API가 빈 배열 반환 | [QUICK_START.md](./QUICK_START.md#q4-상품이-나오지-않아요) 참조 |

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { RegisterForm } from "@/components/auth/RegisterForm"
 
-export const metadata: Metadata = { title: "회원가입 - 인생고민" }
+export const metadata: Metadata = { title: "회원가입 - GigaCoffee" }
 
 export default function RegisterPage() {
   return (

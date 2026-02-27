@@ -33,21 +33,21 @@ Supabase 대시보드 → SQL Editor에서 다음 코드 실행:
 
 ```sql
 -- 스키마 접근 권한
-GRANT USAGE ON SCHEMA eatsy TO anon, authenticated;
+GRANT USAGE ON SCHEMA gigacoffee TO anon, authenticated;
 
 -- 테이블 SELECT 권한
-GRANT SELECT ON eatsy.categories TO anon, authenticated;
-GRANT SELECT ON eatsy.products TO anon, authenticated;
-GRANT SELECT ON eatsy.orders TO anon, authenticated;
-GRANT SELECT ON eatsy.profiles TO anon, authenticated;
-GRANT SELECT ON eatsy.inventory TO anon, authenticated;
+GRANT SELECT ON gigacoffee.categories TO anon, authenticated;
+GRANT SELECT ON gigacoffee.products TO anon, authenticated;
+GRANT SELECT ON gigacoffee.orders TO anon, authenticated;
+GRANT SELECT ON gigacoffee.profiles TO anon, authenticated;
+GRANT SELECT ON gigacoffee.inventory TO anon, authenticated;
 
 -- RLS 정책
 CREATE POLICY "Allow public read on categories"
-ON eatsy.categories FOR SELECT USING (true);
+ON gigacoffee.categories FOR SELECT USING (true);
 
 CREATE POLICY "Allow public read on products"
-ON eatsy.products FOR SELECT USING (true);
+ON gigacoffee.products FOR SELECT USING (true);
 ```
 
 ### 5단계: 개발 서버 시작
@@ -193,10 +193,10 @@ curl http://localhost:3000/api/members/me
 
 ## 📝 자주 묻는 질문
 
-### Q1: "permission denied for schema eatsy" 에러가 나요
+### Q1: "permission denied for schema gigacoffee" 에러가 나요
 **A**: Supabase RLS 권한 설정이 필요합니다.
 ```sql
-GRANT USAGE ON SCHEMA eatsy TO anon, authenticated;
+GRANT USAGE ON SCHEMA gigacoffee TO anon, authenticated;
 ```
 
 ### Q2: 이미지가 안 보여요

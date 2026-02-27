@@ -9,7 +9,7 @@ export function Footer() {
 
           {/* 브랜드 */}
           <div>
-            <p className="font-display text-xl font-bold italic text-white">인생고민</p>
+            <p className="font-display text-xl font-bold italic text-white">GigaCoffee</p>
             <p className="mt-3 text-sm leading-relaxed text-white/50">
               당신의 하루를 위로하는 한 잔의 커피.
               <br />정성과 시간으로 빚은 커피를 드립니다.
@@ -58,7 +58,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-white/30">
-          © 2026 인생고민. All rights reserved.
+          © 2026 GigaCoffee. All rights reserved.
         </div>
       </div>
     </footer>

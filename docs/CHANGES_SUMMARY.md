@@ -292,14 +292,14 @@ const { data: products } = await res.json()
 ## 🐛 버그 수정
 
 ### 1. Supabase RLS 권한 문제
-**증상**: `permission denied for schema eatsy`
+**증상**: `permission denied for schema gigacoffee`
 **원인**: anon, authenticated role에 스키마/테이블 접근 권한 없음
 **해결**: SQL로 권한 설정
 
 ```sql
-GRANT USAGE ON SCHEMA eatsy TO anon, authenticated;
-GRANT SELECT ON eatsy.products TO anon, authenticated;
-GRANT SELECT ON eatsy.categories TO anon, authenticated;
+GRANT USAGE ON SCHEMA gigacoffee TO anon, authenticated;
+GRANT SELECT ON gigacoffee.products TO anon, authenticated;
+GRANT SELECT ON gigacoffee.categories TO anon, authenticated;
 ```
 
 ---

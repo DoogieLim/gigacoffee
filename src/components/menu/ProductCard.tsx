@@ -13,7 +13,8 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem)
 
-  function handleAddToCart() {
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault()
     addItem({
       product_id: product.id,
       product_name: product.name,
@@ -25,42 +26,47 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      <Link href={`/menu/${product.id}`}>
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
-          {product.image_url ? (
-            <img
-              src={normalizeImageUrl(product.image_url) || product.image_url}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-4xl">☕</div>
-          )}
-          {!product.is_available && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-              <span className="rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-700">
-                품절
-              </span>
-            </div>
-          )}
-        </div>
-      </Link>
-      <div className="flex flex-1 flex-col p-3">
-        <Link href={`/menu/${product.id}`}>
-          <h3 className="font-medium text-gray-900 line-clamp-1">{product.name}</h3>
-        </Link>
-        <p className="mt-auto pt-2 text-sm font-semibold text-amber-700">
-          {formatPrice(product.price)}
-        </p>
+    <Link
+      href={`/menu/${product.id}`}
+      className="group relative flex flex-col items-center p-3 transition-transform active:scale-95"
+    >
+      <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] bg-neutral-100 shadow-premium">
+        {product.image_url ? (
+          <img
+            src={normalizeImageUrl(product.image_url) || product.image_url}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-4xl">☕</div>
+        )}
+
+        {/* Quick Add Button - Touch Friendly FAB style */}
         <button
           onClick={handleAddToCart}
           disabled={!product.is_available}
-          className="mt-2 w-full rounded-lg bg-amber-700 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-800 disabled:bg-gray-200 disabled:text-gray-500 active:scale-95"
+          className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white shadow-lg transition-colors hover:bg-brand/90 disabled:bg-neutral-200"
         >
-          장바구니 담기
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
         </button>
+
+        {!product.is_available && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[2px]">
+            <span className="rounded-full bg-neutral-900 px-3 py-1 text-[10px] font-black uppercase text-white">
+              Sold Out
+            </span>
+          </div>
+        )}
       </div>
-    </div>
+
+      <div className="mt-3 flex flex-col items-center text-center px-1">
+        <h3 className="text-xs font-bold text-neutral-900 line-clamp-1 leading-tight">{product.name}</h3>
+        <p className="mt-1 text-sm font-black text-brand">
+          {formatPrice(product.price)}
+        </p>
+      </div>
+    </Link>
   )
 }

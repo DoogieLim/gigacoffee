@@ -59,5 +59,5 @@ function buildPushMessage(
     },
     NEW_ORDER: { title: "새 주문", body: "새 주문이 들어왔습니다." },
   }
-  return messages[eventType] ?? { title: "인생고민 알림", body: data.message ?? "알림이 도착했습니다." }
+  return messages[eventType] ?? { title: "GigaCoffee 알림", body: data.message ?? "알림이 도착했습니다." }
 }

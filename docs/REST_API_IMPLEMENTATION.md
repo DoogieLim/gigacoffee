@@ -1,7 +1,7 @@
 # REST API 화 구현 문서
 
 **작성일**: 2026-02-26
-**프로젝트**: Eatsy (카페 주문 관리 시스템)
+**프로젝트**: GigaCoffee (카페 주문 관리 시스템)
 **기술 스택**: Next.js 16 + TypeScript + Supabase + Tailwind CSS v4
 
 ---
@@ -635,14 +635,14 @@ export function normalizeImageUrl(imageUrl: string | null): string | null {
 **해결책**:
 ```sql
 -- Supabase SQL Editor에서 실행
-GRANT USAGE ON SCHEMA eatsy TO anon, authenticated;
-GRANT SELECT ON eatsy.products TO anon, authenticated;
-GRANT SELECT ON eatsy.categories TO anon, authenticated;
+GRANT USAGE ON SCHEMA gigacoffee TO anon, authenticated;
+GRANT SELECT ON gigacoffee.products TO anon, authenticated;
+GRANT SELECT ON gigacoffee.categories TO anon, authenticated;
 
 CREATE POLICY "Allow public read on products"
-ON eatsy.products FOR SELECT USING (true);
+ON gigacoffee.products FOR SELECT USING (true);
 CREATE POLICY "Allow public read on categories"
-ON eatsy.categories FOR SELECT USING (true);
+ON gigacoffee.categories FOR SELECT USING (true);
 ```
 
 ---
@@ -686,31 +686,31 @@ ON eatsy.categories FOR SELECT USING (true);
 
 ```sql
 -- 스키마 접근 권한
-GRANT USAGE ON SCHEMA eatsy TO anon, authenticated;
+GRANT USAGE ON SCHEMA gigacoffee TO anon, authenticated;
 
 -- 테이블 SELECT 권한
-GRANT SELECT ON eatsy.categories TO anon, authenticated;
-GRANT SELECT ON eatsy.products TO anon, authenticated;
-GRANT SELECT ON eatsy.inventory TO anon, authenticated;
-GRANT SELECT ON eatsy.orders TO anon, authenticated;
-GRANT SELECT ON eatsy.profiles TO anon, authenticated;
-GRANT SELECT ON eatsy.notification_logs TO anon, authenticated;
+GRANT SELECT ON gigacoffee.categories TO anon, authenticated;
+GRANT SELECT ON gigacoffee.products TO anon, authenticated;
+GRANT SELECT ON gigacoffee.inventory TO anon, authenticated;
+GRANT SELECT ON gigacoffee.orders TO anon, authenticated;
+GRANT SELECT ON gigacoffee.profiles TO anon, authenticated;
+GRANT SELECT ON gigacoffee.notification_logs TO anon, authenticated;
 
 -- RLS 정책 (공개 읽기)
 CREATE POLICY "Allow public read on categories"
-ON eatsy.categories FOR SELECT USING (true);
+ON gigacoffee.categories FOR SELECT USING (true);
 
 CREATE POLICY "Allow public read on products"
-ON eatsy.products FOR SELECT USING (true);
+ON gigacoffee.products FOR SELECT USING (true);
 
 -- 사용자가 자신의 주문만 볼 수 있도록
 CREATE POLICY "Users can read own orders"
-ON eatsy.orders FOR SELECT
+ON gigacoffee.orders FOR SELECT
 USING (auth.uid() = user_id);
 
 -- 사용자가 자신의 프로필만 수정 가능
 CREATE POLICY "Users can update own profile"
-ON eatsy.profiles FOR UPDATE
+ON gigacoffee.profiles FOR UPDATE
 USING (auth.uid() = id);
 ```
 
@@ -797,8 +797,8 @@ Authorization: Bearer <JWT_TOKEN> (필수)
 
 ### 1. Supabase 스키마 설정
 
-- 모든 테이블이 `public` 스키마가 아니라 **`eatsy` 스키마**에 위치
-- createClient 초기화 시 반드시 `db: { schema: "eatsy" }` 지정
+- 모든 테이블이 `public` 스키마가 아니라 **`gigacoffee` 스키마**에 위치
+- createClient 초기화 시 반드시 `db: { schema: "gigacoffee" }` 지정
 
 ### 2. 이미지 URL 변환
 

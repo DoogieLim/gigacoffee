@@ -6,6 +6,7 @@ export interface Post {
   category: PostCategory
   title: string
   content: string
+  images: string[]
   is_pinned: boolean
   is_hidden: boolean
   view_count: number
@@ -20,6 +21,7 @@ export interface Comment {
   post_id: string
   author_id: string
   content: string
+  images: string[]
   is_hidden: boolean
   created_at: string
   author?: { name: string; avatar_url: string | null }
@@ -29,4 +31,10 @@ export interface CreatePostInput {
   category: PostCategory
   title: string
   content: string
+  images?: string[]
+}
+
+export interface CreateCommentInput {
+  content: string
+  images?: string[]
 }

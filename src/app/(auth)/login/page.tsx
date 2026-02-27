@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { LoginForm } from "@/components/auth/LoginForm"
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons"
 
-export const metadata: Metadata = { title: "로그인 - 인생고민" }
+export const metadata: Metadata = { title: "로그인 - GigaCoffee" }
 
 export default function LoginPage() {
   return (

@@ -11,8 +11,8 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "인생고민 카페",
-  description: "당신의 인생고민을 함께 나누는 카페",
+  title: "GigaCoffee",
+  description: "GigaCoffee - 당신의 하루를 위로하는 한 잔의 커피",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

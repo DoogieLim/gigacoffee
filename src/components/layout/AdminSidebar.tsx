@@ -23,7 +23,7 @@ export function AdminSidebar() {
   return (
     <aside className="flex h-full w-60 flex-col border-r border-gray-200 bg-gray-900">
       <div className="flex h-16 items-center px-6">
-        <span className="text-lg font-bold text-amber-400">인생고민 관리자</span>
+        <span className="text-lg font-bold text-amber-400">GigaCoffee 관리자</span>
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
         {navItems.map((item) => {

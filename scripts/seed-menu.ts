@@ -1,10 +1,10 @@
 import { createClient } from "@supabase/supabase-js"
 
-// DB용 (eatsy schema)
+// DB용 (gigacoffee schema)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { db: { schema: "eatsy" } }
+  { db: { schema: "gigacoffee" } }
 )
 
 // Storage용 (schema 옵션 불필요)

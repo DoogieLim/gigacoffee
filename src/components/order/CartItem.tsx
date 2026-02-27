@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { formatPrice } from "@/lib/utils/format"
+import { normalizeImageUrl } from "@/lib/utils/image"
 import { useCartStore } from "@/stores/cartStore"
 import type { CartItem as CartItemType } from "@/types/order.types"
 
@@ -13,11 +14,13 @@ export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore()
   const itemTotal = (item.price + item.options.reduce((s, o) => s + o.price_delta, 0)) * item.quantity
 
+  const imageUrl = normalizeImageUrl(item.image_url)
+
   return (
     <div className="flex gap-3 py-4">
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-        {item.image_url ? (
-          <Image src={item.image_url} alt={item.product_name} fill className="object-cover" />
+        {imageUrl ? (
+          <Image src={imageUrl} alt={item.product_name} fill className="object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center text-2xl">☕</div>
         )}

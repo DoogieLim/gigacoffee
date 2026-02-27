@@ -4,7 +4,7 @@ async function check() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { db: { schema: "eatsy" } }
+    { db: { schema: "gigacoffee" } }
   )
 
   const cats = await supabase.from("categories").select("*")

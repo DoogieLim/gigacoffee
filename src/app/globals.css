@@ -1,42 +1,75 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5F2EB;
-  --foreground: #18170E;
+  /* Surface colors - Soft Cream/Paper vibe */
+  --background: #FDFCFB;
+  --foreground: #1A1A1A;
+  
+  /* Brand colors - Sophisticated Navy & Amber */
+  --brand: #1B3652;
+  --brand-muted: rgba(27, 54, 82, 0.1);
+  --accent: #A8652A;
+  --accent-muted: rgba(168, 101, 42, 0.1);
+  
+  /* Tech colors - Robot/Future vibe */
+  --tech: #007AFF;
+  --tech-glow: rgba(0, 122, 255, 0.4);
+  
+  /* Neutral scale */
+  --neutral-50: #F9F8F6;
+  --neutral-100: #F3F1ED;
+  --neutral-200: #EAE7E1;
+  --neutral-800: #2D2D2D;
+  --neutral-900: #1A1A1A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist, Arial, sans-serif);
-  --font-display: var(--font-playfair, Georgia, serif);
-
-  /* 브랜드 */
-  --color-brand: #1B3652;
-  --color-brand-hover: #152A3E;
-  --color-brand-light: #E8EFF6;
-
-  /* 커피 */
-  --color-coffee: #A8652A;
-  --color-coffee-hover: #8F5522;
-  --color-coffee-light: #FBF0E4;
-
-  /* 테크 (로봇배송) */
-  --color-tech: #5B7CF6;
-  --color-tech-light: #EEF1FE;
-
-  /* 크림/뉴트럴 */
-  --color-cream: #F5F2EB;
-  --color-cream-dark: #EDE9E0;
-  --color-ink: #18170E;
-  --color-ink-secondary: #5A5649;
-  --color-ink-muted: #9A9288;
-  --color-border-warm: #DDD7CA;
-  --color-border-light: #EEEBE4;
-  --color-dark: #111218;
+  
+  --color-brand: var(--brand);
+  --color-accent: var(--accent);
+  --color-tech: var(--tech);
+  
+  --color-surface: var(--neutral-50);
+  --color-surface-hover: var(--neutral-100);
+  --color-border-subtle: var(--neutral-200);
+  
+  --font-sans: "Inter", var(--font-geist, sans-serif);
+  --font-display: "Outfit", var(--font-playfair, serif);
+  
+  /* Shadows */
+  --shadow-premium: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 8px -2px rgba(0, 0, 0, 0.03);
+  --shadow-glow: 0 0 20px var(--tech-glow);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    -webkit-tap-highlight-color: transparent;
+    @apply font-sans;
+  }
+  
+  /* Smooth scrolls for categories */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

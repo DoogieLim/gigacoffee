@@ -17,7 +17,11 @@
       "Bash(source:*)",
       "Bash(cat:*)",
       "WebFetch(domain:rnzfohzrkxqbnqukdhgk.supabase.co)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:developer.atlassian.com)",
+      "WebFetch(domain:support.atlassian.com)",
+      "WebFetch(domain:blog.johnys.io)"
     ]
   }
 }

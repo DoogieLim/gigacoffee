@@ -49,9 +49,9 @@ export async function sendSmsNotification(
 
 function buildSmsText(eventType: string, data: Record<string, string>): string {
   const templates: Record<string, string> = {
-    ORDER_PAID: `[인생고민] 주문이 완료되었습니다. 주문번호: ${data.orderId}`,
-    ORDER_READY: `[인생고민] 음료가 준비되었습니다. 픽업해주세요! 주문번호: ${data.orderId}`,
-    ORDER_CANCELLED: `[인생고민] 주문이 취소되었습니다. 주문번호: ${data.orderId}`,
+    ORDER_PAID: `[GigaCoffee] 주문이 완료되었습니다. 주문번호: ${data.orderId}`,
+    ORDER_READY: `[GigaCoffee] 음료가 준비되었습니다. 픽업해주세요! 주문번호: ${data.orderId}`,
+    ORDER_CANCELLED: `[GigaCoffee] 주문이 취소되었습니다. 주문번호: ${data.orderId}`,
   }
-  return templates[eventType] ?? `[인생고민] ${data.message ?? "알림이 도착했습니다."}`
+  return templates[eventType] ?? `[GigaCoffee] ${data.message ?? "알림이 도착했습니다."}`
 }

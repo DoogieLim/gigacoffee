@@ -17,6 +17,7 @@ export interface Product {
   name: string
   price: number
   image_url: string | null
+  description: string | null
   is_available: boolean
   options: ProductOption[]
   category?: Category

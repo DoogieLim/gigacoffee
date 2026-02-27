@@ -7,6 +7,8 @@ export function normalizeImageUrl(imageUrl: string | null): string | null {
 
   // 이미 현재 프로젝트의 도메인이면 그대로 반환
   const currentDomain = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!currentDomain) return imageUrl
+
   if (imageUrl.includes(currentDomain)) {
     return imageUrl
   }

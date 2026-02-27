@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { CartSummary } from "@/components/order/CartSummary"
 
-export const metadata: Metadata = { title: "장바구니 - 인생고민" }
+export const metadata: Metadata = { title: "장바구니 - GigaCoffee" }
 
 export default function OrderPage() {
   return (

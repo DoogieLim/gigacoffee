@@ -110,9 +110,6 @@ export default function ProductDetailPage() {
             <p className="mt-2 text-sm text-gray-500">{product.category.name}</p>
           )}
 
-          <div className="mt-4 border-t border-gray-200 pt-4">
-            <p className="text-lg text-gray-600">{product.description}</p>
-          </div>
 
           {!product.is_available && (
             <div className="mt-4 rounded-lg bg-yellow-50 p-3 text-yellow-800">
