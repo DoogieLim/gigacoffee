@@ -136,6 +136,9 @@ export type Database = {
           status: "pending" | "paid" | "preparing" | "ready" | "completed" | "cancelled"
           total_amount: number
           memo: string | null
+          delivery_type: string
+          delivery_address: Json | null
+          delivery_fee: number
           created_at: string
           updated_at: string
         }
@@ -145,6 +148,9 @@ export type Database = {
           status?: "pending" | "paid" | "preparing" | "ready" | "completed" | "cancelled"
           total_amount: number
           memo?: string | null
+          delivery_type?: string
+          delivery_address?: Json | null
+          delivery_fee?: number
           created_at?: string
           updated_at?: string
         }
@@ -154,7 +160,31 @@ export type Database = {
           status?: "pending" | "paid" | "preparing" | "ready" | "completed" | "cancelled"
           total_amount?: number
           memo?: string | null
+          delivery_type?: string
+          delivery_address?: Json | null
+          delivery_fee?: number
           created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      delivery_settings: {
+        Row: {
+          type: string
+          fee: number
+          is_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          type: string
+          fee?: number
+          is_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          type?: string
+          fee?: number
+          is_enabled?: boolean
           updated_at?: string
         }
         Relationships: []

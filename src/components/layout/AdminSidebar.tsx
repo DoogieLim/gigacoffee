@@ -15,6 +15,7 @@ const navItems = [
   { href: ROUTES.ADMIN_NOTIFICATIONS, label: "알림 관리" },
   { href: ROUTES.ADMIN_BOARD, label: "게시판 관리" },
   { href: ROUTES.ADMIN_ROLES, label: "권한 관리" },
+  { href: ROUTES.ADMIN_DELIVERY, label: "배달 설정" },
 ]
 
 export function AdminSidebar() {

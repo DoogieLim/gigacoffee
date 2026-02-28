@@ -17,7 +17,14 @@ export class SupabaseOrderRepository implements OrderRepository {
     const supabase = await this.db()
     const { data: row, error } = await supabase
       .from("orders")
-      .insert({ user_id: data.userId, total_amount: data.totalAmount, memo: data.memo ?? null })
+      .insert({
+        user_id: data.userId,
+        total_amount: data.totalAmount,
+        memo: data.memo ?? null,
+        delivery_type: data.deliveryType,
+        delivery_address: (data.deliveryAddress ?? null) as import("@/types/database.types").Json | null,
+        delivery_fee: data.deliveryFee,
+      })
       .select()
       .single()
     if (error || !row) throw new Error("주문 생성에 실패했습니다.")
@@ -52,7 +59,7 @@ export class SupabaseOrderRepository implements OrderRepository {
     const supabase = await this.db()
     const { data } = await supabase
       .from("orders")
-      .select("id, status, total_amount, created_at, updated_at, user_id, memo, order_items(product_name)")
+      .select("id, status, total_amount, delivery_type, delivery_address, delivery_fee, created_at, updated_at, user_id, memo, order_items(product_name)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
     return (data ?? []) as unknown as OrderWithItems[]
@@ -74,7 +81,7 @@ export class SupabaseOrderRepository implements OrderRepository {
     today.setHours(0, 0, 0, 0)
     const { data } = await supabase
       .from("orders")
-      .select("id, total_amount, status, created_at, user_id, memo, updated_at")
+      .select("id, total_amount, status, delivery_type, delivery_fee, created_at, user_id, memo, updated_at")
       .gte("created_at", today.toISOString())
       .order("created_at", { ascending: false })
     return (data ?? []) as unknown as Order[]

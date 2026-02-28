@@ -1,20 +1,26 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import type { CartItem } from "@/types/order.types"
+import type { CartItem, DeliveryType, DeliveryAddress } from "@/types/order.types"
 
 interface CartStore {
   items: CartItem[]
+  deliveryType: DeliveryType
+  deliveryAddress: DeliveryAddress | null
   addItem: (item: CartItem) => void
   removeItem: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
   getTotal: () => number
+  setDeliveryType: (type: DeliveryType) => void
+  setDeliveryAddress: (address: DeliveryAddress | null) => void
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      deliveryType: "pickup",
+      deliveryAddress: null,
 
       addItem: (newItem) => {
         set((state) => {
@@ -46,7 +52,7 @@ export const useCartStore = create<CartStore>()(
         }))
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], deliveryAddress: null }),
 
       getTotal: () => {
         const { items } = get()
@@ -54,6 +60,14 @@ export const useCartStore = create<CartStore>()(
           const optionTotal = item.options.reduce((s, o) => s + o.price_delta, 0)
           return total + (item.price + optionTotal) * item.quantity
         }, 0)
+      },
+
+      setDeliveryType: (type) => {
+        set({ deliveryType: type, deliveryAddress: type === "pickup" ? null : get().deliveryAddress })
+      },
+
+      setDeliveryAddress: (address) => {
+        set({ deliveryAddress: address })
       },
     }),
     { name: "cart-storage" }

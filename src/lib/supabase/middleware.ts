@@ -40,6 +40,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url))
   }
 
+  // 키오스크 경로 보호 (자동 로그인 전까지 일시적으로 접근 가능해야 하므로 미인증 시 루트로)
+  // KioskProvider가 자동 로그인 처리를 담당하므로 middleware에서는 통과
+  // (키오스크 기기는 전용 환경이므로 보안은 KioskProvider에서 처리)
+
   // 인증된 사용자가 로그인 페이지 접근 시 리다이렉트
   if (user && (pathname === ROUTES.LOGIN || pathname === ROUTES.REGISTER)) {
     return NextResponse.redirect(new URL(ROUTES.HOME, request.url))

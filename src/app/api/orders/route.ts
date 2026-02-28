@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server"
-import { orderRepo } from "@/lib/db"
+import { orderRepo, deliveryRepo } from "@/lib/db"
 import { dispatch } from "@/lib/notifications/dispatcher"
 import { getAuthUser } from "@/lib/api/auth"
 import { apiSuccess, apiError } from "@/lib/api/response"
@@ -32,15 +32,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const input = body as CreateOrderInput
 
-    const total = input.items.reduce((sum, item) => {
+    const deliveryType = input.delivery_type ?? "pickup"
+
+    let verifiedDeliveryFee = 0
+    if (deliveryType !== "pickup") {
+      const settings = await deliveryRepo.findAll()
+      const setting = settings.find((s) => s.type === deliveryType)
+      if (!setting?.is_enabled) return apiError("현재 해당 배달 서비스를 이용할 수 없습니다.", 400)
+      verifiedDeliveryFee = setting.fee
+    }
+
+    const itemTotal = input.items.reduce((sum, item) => {
       const optionTotal = item.options.reduce((s, o) => s + o.price_delta, 0)
       return sum + (item.price + optionTotal) * item.quantity
     }, 0)
+    const total = itemTotal + verifiedDeliveryFee
 
     const order = await orderRepo.create({
       userId: user.id,
       totalAmount: total,
       memo: input.memo,
+      deliveryType,
+      deliveryAddress: input.delivery_address ?? null,
+      deliveryFee: verifiedDeliveryFee,
     })
 
     await orderRepo.insertItems(

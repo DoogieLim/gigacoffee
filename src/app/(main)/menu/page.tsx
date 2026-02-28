@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { ProductGrid } from "@/components/menu/ProductGrid"
 import { CategoryFilterClient } from "@/components/menu/CategoryFilterClient"
 import { Spinner } from "@/components/ui/Spinner"
 import type { Product, Category } from "@/types/product.types"
 
-export default function MenuPage() {
+function MenuPageContent() {
   const searchParams = useSearchParams()
   const categoryId = searchParams.get("categoryId")
 
@@ -130,5 +130,13 @@ export default function MenuPage() {
         <ProductGrid products={products} />
       )}
     </div>
+  )
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-20"><Spinner size="lg" /></div>}>
+      <MenuPageContent />
+    </Suspense>
   )
 }

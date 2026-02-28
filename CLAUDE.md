@@ -147,6 +147,56 @@ export { SupabaseAuthProvider as AuthProviderClass } from './providers/supabase'
 
 `.env.example` 파일을 복사하여 `.env.local`을 생성하고 값을 입력하세요.
 
+```bash
+cp .env.example .env.local
+# 이후 .env.local에 실제 값 입력
+```
+
+환경변수는 `.gitignore`로 제외되어 있습니다. 실제 키 값은 팀 내부 채널로 공유하세요.
+
+## Git 컨벤션
+
+| 항목 | 규칙 |
+|------|------|
+| 브랜치 | `feature/{issue-number}-{short-desc}` (예: `feature/42-add-vector-search`) |
+| 커밋 | `feat\|fix\|docs\|refactor\|chore\|test: 한글 설명` |
+| main 브랜치 | 직접 push 금지, PR 필수 |
+
+**코드 리뷰 체크리스트**
+- TypeScript 타입 안전성
+- 서버/클라이언트 컴포넌트 경계
+- Repository 패턴 준수 (`supabase.from()` 직접 호출 금지, 반드시 repo 경유)
+- 에러 처리
+
+## Claude Code 세션 프로토콜
+
+이 프로젝트는 Claude Code와 협업합니다. 새 세션 시작 시:
+
+1. Claude가 `supabase-mgmt` MCP로 자동 컨텍스트 로드
+2. 진행 중인 작업·알려진 이슈를 한 줄 요약으로 제공
+3. 작업 완료 후 DB(`claude_mgmt` 스키마)에 세션 로그 기록
+
+### 신규 팀원 MCP 설정
+
+```bash
+# ~/.claude.json 에 추가 (각자 본인의 Supabase PAT 사용)
+{
+  "mcpServers": {
+    "supabase-mgmt": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref", "rhfpenuhuvvxwlalccym",
+        "--access-token", "<본인_SUPABASE_PAT>"
+      ]
+    }
+  }
+}
+```
+
+Supabase PAT는 [app.supabase.com → Account → Access Tokens](https://app.supabase.com/account/tokens) 에서 발급.
+
 ## 요구사항 문서
 
 상세 요구사항은 `docs/requirements.md`를 참조하세요.

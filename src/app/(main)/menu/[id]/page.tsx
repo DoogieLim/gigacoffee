@@ -6,7 +6,7 @@ import { formatPrice } from "@/lib/utils/format"
 import { normalizeImageUrl } from "@/lib/utils/image"
 import { useCartStore } from "@/stores/cartStore"
 import { Spinner } from "@/components/ui/Spinner"
-import type { Product } from "@/types/product.types"
+import type { Product, SelectedOption } from "@/types/product.types"
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -17,6 +17,7 @@ export default function ProductDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
 
   const addItem = useCartStore((s) => s.addItem)
 
@@ -24,33 +25,50 @@ export default function ProductDetailPage() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/products/${id}`)
-        if (!res.ok) {
-          throw new Error("상품을 찾을 수 없습니다")
-        }
+        if (!res.ok) throw new Error("상품을 찾을 수 없습니다")
         const data = await res.json()
-        setProduct(data.data)
+        const p: Product = data.data
+        setProduct(p)
+        // 옵션 기본값: 각 옵션의 첫 번째 선택지
+        const defaults: Record<string, string> = {}
+        p.options?.forEach((opt) => {
+          if (opt.choices.length > 0) defaults[opt.name] = opt.choices[0].label
+        })
+        setSelectedOptions(defaults)
       } catch (err) {
         setError(String(err))
       } finally {
         setIsLoading(false)
       }
     }
-
     fetchProduct()
   }, [id])
 
+  const optionTotal = product?.options?.reduce((sum, opt) => {
+    const choice = opt.choices.find((c) => c.label === selectedOptions[opt.name])
+    return sum + (choice?.price_delta ?? 0)
+  }, 0) ?? 0
+
+  const totalPrice = product ? (product.price + optionTotal) * quantity : 0
+
   const handleAddToCart = () => {
-    if (product) {
-      addItem({
-        product_id: product.id,
-        product_name: product.name,
-        price: product.price,
-        quantity,
-        options: [],
-        image_url: product.image_url,
-      })
-      router.push("/order")
-    }
+    if (!product) return
+
+    const options: SelectedOption[] = product.options?.map((opt) => {
+      const label = selectedOptions[opt.name] ?? opt.choices[0]?.label ?? ""
+      const choice = opt.choices.find((c) => c.label === label)
+      return { name: opt.name, choice: label, price_delta: choice?.price_delta ?? 0 }
+    }) ?? []
+
+    addItem({
+      product_id: product.id,
+      product_name: product.name,
+      price: product.price,
+      quantity,
+      options,
+      image_url: product.image_url,
+    })
+    router.push("/order")
   }
 
   if (isLoading) {
@@ -67,22 +85,18 @@ export default function ProductDetailPage() {
         <div className="rounded-lg bg-red-50 p-4 text-red-700">
           <p>{error || "상품을 찾을 수 없습니다"}</p>
         </div>
-        <button
-          onClick={() => router.back()}
-          className="mt-4 text-amber-700 hover:underline"
-        >
+        <button onClick={() => router.back()} className="mt-4 text-amber-700 hover:underline">
           ← 뒤로가기
         </button>
       </div>
     )
   }
 
+  const hasOptions = product.options && product.options.length > 0
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <button
-        onClick={() => router.back()}
-        className="mb-6 text-amber-700 hover:underline"
-      >
+      <button onClick={() => router.back()} className="mb-6 text-amber-700 hover:underline">
         ← 뒤로가기
       </button>
 
@@ -110,6 +124,9 @@ export default function ProductDetailPage() {
             <p className="mt-2 text-sm text-gray-500">{product.category.name}</p>
           )}
 
+          {product.description && (
+            <p className="mt-4 text-sm leading-relaxed text-gray-600">{product.description}</p>
+          )}
 
           {!product.is_available && (
             <div className="mt-4 rounded-lg bg-yellow-50 p-3 text-yellow-800">
@@ -117,10 +134,46 @@ export default function ProductDetailPage() {
             </div>
           )}
 
+          {/* 옵션 선택 */}
+          {hasOptions && (
+            <div className="mt-6 space-y-4">
+              {product.options.map((opt) => (
+                <div key={opt.name}>
+                  <p className="mb-2 text-sm font-medium text-gray-700">{opt.name}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {opt.choices.map((choice) => {
+                      const selected = selectedOptions[opt.name] === choice.label
+                      return (
+                        <button
+                          key={choice.label}
+                          onClick={() =>
+                            setSelectedOptions((prev) => ({ ...prev, [opt.name]: choice.label }))
+                          }
+                          className={`rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-all ${
+                            selected
+                              ? "border-amber-700 bg-amber-700 text-white"
+                              : "border-gray-200 text-gray-700 hover:border-amber-300"
+                          }`}
+                        >
+                          {choice.label}
+                          {choice.price_delta !== 0 && (
+                            <span className="ml-1 font-normal">
+                              ({choice.price_delta > 0 ? "+" : ""}{formatPrice(choice.price_delta)})
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="mt-8 border-t border-gray-200 pt-8">
             <p className="text-sm text-gray-500">가격</p>
             <p className="mt-2 text-3xl font-bold text-amber-700">
-              {formatPrice(product.price)}
+              {formatPrice(product.price + optionTotal)}
             </p>
           </div>
 
@@ -133,13 +186,11 @@ export default function ProductDetailPage() {
                 −
               </button>
               <span className="w-8 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="px-3 py-2 text-lg"
-              >
+              <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-lg">
                 +
               </button>
             </div>
+            <p className="text-sm text-gray-500">총 {formatPrice(totalPrice)}</p>
           </div>
 
           <button

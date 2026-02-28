@@ -57,10 +57,11 @@ export class SupabaseAuthProvider implements AuthProvider {
     if (error) throw new Error(error.message)
   }
 
-  async signInWithOAuth(provider: "kakao" | "google"): Promise<void> {
+  async signInWithOAuth(provider: "kakao" | "google", next?: string): Promise<void> {
+    const redirectTo = `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ""}`
     const { error } = await this.supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo },
     })
     if (error) throw new Error(error.message)
   }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/Input"
 import { Button } from "@/components/ui/Button"
 import { useAuth } from "@/hooks/useAuth"
@@ -10,6 +10,8 @@ import { ROUTES } from "@/lib/constants/routes"
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const from = searchParams.get("from")
   const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -22,7 +24,7 @@ export function LoginForm() {
     setIsLoading(true)
     try {
       await signIn(email, password)
-      router.push(ROUTES.HOME)
+      router.push(from ?? ROUTES.HOME)
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했습니다.")
     } finally {
@@ -56,7 +58,7 @@ export function LoginForm() {
         <Link href={ROUTES.FORGOT_PASSWORD} className="hover:text-amber-700">
           비밀번호 찾기
         </Link>
-        <Link href={ROUTES.REGISTER} className="hover:text-amber-700">
+        <Link href={from ? `${ROUTES.REGISTER}?from=${from}` : ROUTES.REGISTER} className="hover:text-amber-700">
           회원가입
         </Link>
       </div>

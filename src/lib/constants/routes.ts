@@ -20,4 +20,5 @@ export const ROUTES = {
   ADMIN_NOTIFICATIONS: "/admin/notifications",
   ADMIN_BOARD: "/admin/board",
   ADMIN_ROLES: "/admin/roles",
+  ADMIN_DELIVERY: "/admin/delivery",
 } as const

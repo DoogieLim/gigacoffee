@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/Input"
 import { Button } from "@/components/ui/Button"
 import { useAuth } from "@/hooks/useAuth"
@@ -10,6 +10,8 @@ import { ROUTES } from "@/lib/constants/routes"
 
 export function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const from = searchParams.get("from")
   const { signUp } = useAuth()
   const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "", name: "", phone: "" })
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -36,7 +38,7 @@ export function RegisterForm() {
     setIsLoading(true)
     try {
       await signUp(formData.email, formData.password, formData.name)
-      router.push(ROUTES.HOME)
+      router.push(from ?? ROUTES.HOME)
     } catch (err) {
       setErrors({ general: err instanceof Error ? err.message : "회원가입에 실패했습니다." })
     } finally {

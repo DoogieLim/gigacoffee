@@ -21,7 +21,7 @@ export function useAuth() {
   )
   const signOut = useCallback(() => provider.signOut(), [])
   const signInWithOAuth = useCallback(
-    (p: "kakao" | "google") => provider.signInWithOAuth(p),
+    (p: "kakao" | "google", next?: string) => provider.signInWithOAuth(p, next),
     []
   )
   const resetPassword = useCallback((email: string) => provider.resetPassword(email), [])

@@ -1,10 +1,13 @@
-import type { Order, OrderStatus } from "@/types/order.types"
+import type { Order, OrderStatus, DeliveryType, DeliveryAddress } from "@/types/order.types"
 import type { Json } from "@/types/database.types"
 
 export interface CreateOrderData {
   userId: string
   totalAmount: number
   memo?: string | null
+  deliveryType: DeliveryType
+  deliveryAddress?: DeliveryAddress | null
+  deliveryFee: number
 }
 
 export interface CreateOrderItemData {

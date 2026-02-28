@@ -5,8 +5,14 @@ import { FcmInitializer } from "@/components/layout/FcmInitializer"
 import { createClient } from "@/lib/supabase/server"
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    // Supabase 초기화 실패 시 비로그인 상태로 진행
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

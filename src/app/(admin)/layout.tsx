@@ -1,6 +1,32 @@
+import { redirect } from "next/navigation"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/layout/AdminSidebar"
+import { ROUTES } from "@/lib/constants/routes"
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+async function getAdminUser() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const service = await createServiceClient()
+  const { data } = await service
+    .from("user_roles")
+    .select("role:roles(name)")
+    .eq("user_id", user.id)
+
+  const rows = (data ?? []) as unknown as Array<{ role: { name: string } | null }>
+  const roles = rows.map((r) => r.role?.name)
+  const isAdmin = roles.includes("admin") || roles.includes("staff")
+  return isAdmin ? user : null
+}
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await getAdminUser()
+
+  if (!user) {
+    redirect(ROUTES.LOGIN)
+  }
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* 모바일 경고 배너 */}
