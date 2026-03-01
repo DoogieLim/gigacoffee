@@ -61,7 +61,10 @@ export class SupabaseAuthProvider implements AuthProvider {
     const redirectTo = `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ""}`
     const { error } = await this.supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo },
+      options: {
+        redirectTo,
+        scopes: provider === "kakao" ? "profile_nickname profile_image" : undefined,
+      },
     })
     if (error) throw new Error(error.message)
   }
