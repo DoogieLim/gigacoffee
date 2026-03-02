@@ -189,9 +189,17 @@ export default function KioskCheckoutPage() {
         <button
           onClick={handleOrder}
           disabled={isLoading}
-          className="w-full rounded-2xl bg-amber-500 py-6 text-2xl font-bold text-gray-900 transition-colors hover:bg-amber-400 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
+          className="inline-flex w-full items-center justify-center rounded-2xl bg-amber-500 py-6 text-2xl font-bold text-gray-900 transition-colors hover:bg-amber-400 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
         >
-          {isLoading ? "결제 중..." : `${formatPrice(itemTotal)} 결제하기`}
+          {isLoading ? (
+            <>
+              <svg className="mr-3 h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              결제 중...
+            </>
+          ) : `${formatPrice(itemTotal)} 결제하기`}
         </button>
       </div>
     </div>

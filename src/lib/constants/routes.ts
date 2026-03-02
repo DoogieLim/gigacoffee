@@ -13,6 +13,7 @@ export const ROUTES = {
   MY_ORDERS: "/my/orders",
   MY_PROFILE: "/my/profile",
   ADMIN: "/admin",
+  KIOSK: "/kiosk",
   ADMIN_MEMBERS: "/admin/members",
   ADMIN_PRODUCTS: "/admin/products",
   ADMIN_ORDERS: "/admin/orders",

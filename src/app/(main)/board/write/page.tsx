@@ -122,8 +122,8 @@ export default function WritePostPage() {
             >
               취소
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "작성 중..." : "작성"}
+            <Button type="submit" isLoading={loading}>
+              작성
             </Button>
           </div>
         </form>
