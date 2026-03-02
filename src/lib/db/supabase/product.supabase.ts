@@ -54,7 +54,7 @@ export class SupabaseProductRepository implements ProductRepository {
         image_url: data.imageUrl ?? null,
         description: data.description ?? null,
         is_available: data.isAvailable ?? true,
-        options: [],
+        options: (data.options ?? []) as unknown as never,
       })
       .select("*, category:categories(*)")
       .single()
@@ -71,6 +71,7 @@ export class SupabaseProductRepository implements ProductRepository {
     if (data.imageUrl !== undefined) updates.image_url = data.imageUrl
     if (data.description !== undefined) updates.description = data.description
     if (data.isAvailable !== undefined) updates.is_available = data.isAvailable
+    if (data.options !== undefined) updates.options = data.options ?? []
 
     const { data: row, error } = await supabase
       .from("products")

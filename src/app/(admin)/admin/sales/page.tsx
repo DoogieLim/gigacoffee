@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useTransition } from "react"
 import { getSalesData } from "@/actions/sales.actions"
 import type { Period } from "@/actions/sales.actions"
 import { StatsCard } from "@/components/admin/StatsCard"
@@ -12,14 +12,13 @@ export default function SalesPage() {
   const [period, setPeriod] = useState<Period>("week")
   const [dailySales, setDailySales] = useState<{ date: string; amount: number; orders: number }[]>([])
   const [kpi, setKpi] = useState({ totalSales: 0, orderCount: 0, avgOrderValue: 0 })
-  const [isLoading, setIsLoading] = useState(true)
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    setIsLoading(true)
-    getSalesData(period).then(({ dailySales, kpi }) => {
-      setDailySales(dailySales)
-      setKpi(kpi)
-      setIsLoading(false)
+    startTransition(async () => {
+      const { dailySales: ds, kpi: k } = await getSalesData(period)
+      setDailySales(ds)
+      setKpi(k)
     })
   }, [period])
 
@@ -53,14 +52,14 @@ export default function SalesPage() {
         <StatsCard title="평균 객단가" value={formatPrice(kpi.avgOrderValue)} />
       </div>
 
-      {!isLoading && dailySales.length > 0 && (
+      {!isPending && dailySales.length > 0 && (
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">일별 매출 추이</h2>
           <DailySalesChart dailySales={dailySales} />
         </div>
       )}
 
-      {isLoading && (
+      {isPending && (
         <div className="flex justify-center py-12 text-gray-500">데이터 로딩 중...</div>
       )}
     </div>

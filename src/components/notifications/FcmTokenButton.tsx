@@ -1,16 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { requestFcmToken } from "@/lib/firebase/messaging"
 
 export function FcmTokenButton() {
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "denied" | "error">("idle")
-
-  useEffect(() => {
-    if (!("Notification" in window)) return
-    if (Notification.permission === "granted") setStatus("success")
-    else if (Notification.permission === "denied") setStatus("denied")
-  }, [])
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "denied" | "error">(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return "idle"
+    if (Notification.permission === "granted") return "success"
+    if (Notification.permission === "denied") return "denied"
+    return "idle"
+  })
   const [errorMsg, setErrorMsg] = useState("")
 
   async function handleRequest() {

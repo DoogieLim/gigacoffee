@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Select } from "@/components/ui/Select"
 import { createProduct, updateProduct, deleteProduct } from "@/actions/product.actions"
-import type { Product, Category } from "@/types/product.types"
+import type { Product, Category, ProductOption } from "@/types/product.types"
 
 interface ProductFormProps {
   categories: Category[]
@@ -23,17 +23,96 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const [imageUrl, setImageUrl] = useState(product?.image_url ?? "")
   const [description, setDescription] = useState(product?.description ?? "")
   const [isAvailable, setIsAvailable] = useState(product?.is_available ?? true)
+  const [options, setOptions] = useState<ProductOption[]>(product?.options ?? [])
   const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState("")
 
   const categoryOptions = categories.map((c) => ({ value: c.id, label: c.name }))
 
+  function addOption() {
+    setOptions((prev) => [...prev, { name: "", choices: [{ label: "", price_delta: 0 }] }])
+  }
+
+  function removeOption(optIdx: number) {
+    setOptions((prev) => prev.filter((_, i) => i !== optIdx))
+  }
+
+  function updateOptionName(optIdx: number, value: string) {
+    setOptions((prev) =>
+      prev.map((opt, i) => (i === optIdx ? { ...opt, name: value } : opt))
+    )
+  }
+
+  function addChoice(optIdx: number) {
+    setOptions((prev) =>
+      prev.map((opt, i) =>
+        i === optIdx
+          ? { ...opt, choices: [...opt.choices, { label: "", price_delta: 0 }] }
+          : opt
+      )
+    )
+  }
+
+  function removeChoice(optIdx: number, choiceIdx: number) {
+    setOptions((prev) =>
+      prev.map((opt, i) =>
+        i === optIdx
+          ? { ...opt, choices: opt.choices.filter((_, ci) => ci !== choiceIdx) }
+          : opt
+      )
+    )
+  }
+
+  function updateChoiceLabel(optIdx: number, choiceIdx: number, value: string) {
+    setOptions((prev) =>
+      prev.map((opt, i) =>
+        i === optIdx
+          ? {
+              ...opt,
+              choices: opt.choices.map((c, ci) =>
+                ci === choiceIdx ? { ...c, label: value } : c
+              ),
+            }
+          : opt
+      )
+    )
+  }
+
+  function updateChoicePriceDelta(optIdx: number, choiceIdx: number, value: string) {
+    const parsed = parseInt(value) || 0
+    setOptions((prev) =>
+      prev.map((opt, i) =>
+        i === optIdx
+          ? {
+              ...opt,
+              choices: opt.choices.map((c, ci) =>
+                ci === choiceIdx ? { ...c, price_delta: parsed } : c
+              ),
+            }
+          : opt
+      )
+    )
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!name.trim() || !price || !categoryId) {
       setError("상품명, 카테고리, 가격은 필수입니다.")
       return
+    }
+    // 옵션 유효성 검사: 이름 또는 선택지 label이 빈 경우
+    for (const opt of options) {
+      if (!opt.name.trim()) {
+        setError("옵션명을 입력해주세요.")
+        return
+      }
+      for (const choice of opt.choices) {
+        if (!choice.label.trim()) {
+          setError("선택지 이름을 입력해주세요.")
+          return
+        }
+      }
     }
     setIsLoading(true)
     setError("")
@@ -45,6 +124,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         imageUrl: imageUrl.trim() || null,
         description: description.trim() || null,
         isAvailable,
+        options,
       }
       if (isEdit) {
         await updateProduct(product.id, data)
@@ -131,6 +211,89 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         />
         <span className="text-sm text-gray-700">판매 중 (체크 해제 시 품절 처리)</span>
       </label>
+
+      {/* 옵션 관리 */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium uppercase tracking-widest text-ink-secondary">
+            주문 옵션 (선택)
+          </label>
+          <button
+            type="button"
+            onClick={addOption}
+            className="text-xs text-brand hover:text-brand/80 font-medium"
+          >
+            + 옵션 추가
+          </button>
+        </div>
+
+        {options.length === 0 && (
+          <p className="text-xs text-ink-muted">옵션이 없습니다. 온도, 사이즈 등을 추가할 수 있습니다.</p>
+        )}
+
+        {options.map((opt, optIdx) => (
+          <div key={optIdx} className="border border-border-warm rounded p-3 flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={opt.name}
+                onChange={(e) => updateOptionName(optIdx, e.target.value)}
+                placeholder="옵션명 (예: 온도, 사이즈)"
+                className="flex-1 border border-border-warm bg-white px-3 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/15"
+              />
+              <button
+                type="button"
+                onClick={() => removeOption(optIdx)}
+                className="text-gray-400 hover:text-red-500 text-lg leading-none px-1"
+                aria-label="옵션 삭제"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-1.5 pl-2">
+              {opt.choices.map((choice, choiceIdx) => (
+                <div key={choiceIdx} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={choice.label}
+                    onChange={(e) => updateChoiceLabel(optIdx, choiceIdx, e.target.value)}
+                    placeholder="선택지 (예: HOT, ICE)"
+                    className="flex-1 border border-border-warm bg-white px-2 py-1 text-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand/15"
+                  />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-ink-muted">+</span>
+                    <input
+                      type="number"
+                      value={choice.price_delta}
+                      onChange={(e) => updateChoicePriceDelta(optIdx, choiceIdx, e.target.value)}
+                      placeholder="0"
+                      className="w-20 border border-border-warm bg-white px-2 py-1 text-sm text-ink text-right focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand/15"
+                    />
+                    <span className="text-xs text-ink-muted">원</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeChoice(optIdx, choiceIdx)}
+                    disabled={opt.choices.length <= 1}
+                    className="text-gray-400 hover:text-red-500 disabled:opacity-30 text-base leading-none px-0.5"
+                    aria-label="선택지 삭제"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => addChoice(optIdx)}
+                className="self-start text-xs text-gray-500 hover:text-brand mt-0.5"
+              >
+                + 선택지 추가
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" isLoading={isLoading} className="flex-1">

@@ -1,4 +1,4 @@
-import type { Product, Category } from "@/types/product.types"
+import type { Product, Category, ProductOption } from "@/types/product.types"
 
 export interface CreateProductData {
   categoryId: string
@@ -7,6 +7,7 @@ export interface CreateProductData {
   imageUrl?: string | null
   description?: string | null
   isAvailable?: boolean
+  options?: ProductOption[] | null
 }
 
 export interface UpdateProductData {
@@ -16,6 +17,7 @@ export interface UpdateProductData {
   imageUrl?: string | null
   description?: string | null
   isAvailable?: boolean
+  options?: ProductOption[] | null
 }
 
 export interface ProductRepository {

@@ -44,6 +44,7 @@ export interface Order {
 }
 
 export interface CartItem {
+  itemKey: string
   product_id: string
   product_name: string
   price: number
