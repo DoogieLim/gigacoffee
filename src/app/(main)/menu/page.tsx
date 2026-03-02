@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { ProductGrid } from "@/components/menu/ProductGrid"
 import { CategoryFilterClient } from "@/components/menu/CategoryFilterClient"
+import { RecommendationBanner } from "@/components/menu/RecommendationBanner"
 import { Spinner } from "@/components/ui/Spinner"
 import { useCartStore } from "@/stores/cartStore"
 import { ROUTES } from "@/lib/constants/routes"
@@ -119,6 +120,9 @@ function MenuPageContent() {
           <p className="text-sm">{error}</p>
         </div>
       )}
+
+      {/* 추천 배너: 검색 중이 아닐 때만 표시 */}
+      {!searchQuery.trim() && <RecommendationBanner />}
 
       {/* 카테고리 필터는 검색 중이 아닐 때만 표시 */}
       {!searchQuery.trim() && (
