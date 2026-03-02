@@ -56,7 +56,7 @@ async function getAdminContext(): Promise<{ context: AdminStoreContext } | null>
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const result = await getAdminContext()
+  const result = await getAdminContext().catch(() => null)
 
   if (!result) {
     redirect(ROUTES.LOGIN)
