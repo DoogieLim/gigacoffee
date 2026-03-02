@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useRef } from "react"
+import { useCallback, useMemo } from "react"
 import { AuthProviderClass } from "@/lib/auth"
 import type { AuthUser } from "@/lib/auth/types"
 
@@ -8,11 +8,7 @@ import type { AuthUser } from "@/lib/auth/types"
 // AuthProviderClass 교체 시 이 파일 무변경
 
 export function useAuth() {
-  const providerRef = useRef<InstanceType<typeof AuthProviderClass> | null>(null)
-  if (!providerRef.current) {
-    providerRef.current = new AuthProviderClass()
-  }
-  const provider = providerRef.current
+  const provider = useMemo(() => new AuthProviderClass(), [])
   const getUser = useCallback(() => provider.getUser(), [])
   const signIn = useCallback((email: string, password: string) => provider.signIn(email, password), [])
   const signUp = useCallback(

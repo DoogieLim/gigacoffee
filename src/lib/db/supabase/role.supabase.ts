@@ -90,10 +90,10 @@ export class SupabaseRoleRepository implements RoleRepository {
     return { id: r.id, userId: r.user_id, reason: r.reason, status: r.status, createdAt: r.created_at, profile: r.profile }
   }
 
+  // admin_access_requests 테이블은 자동 생성 타입에 미포함이므로 any 캐스트
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private adminRequestsTable(supabase: any) {
-    // admin_access_requests 테이블은 자동 생성 타입에 미포함이므로 any 캐스트
-    return (supabase as { from: (table: string) => any }).from("admin_access_requests")
+  private adminRequestsTable(supabase: { from: (table: string) => any }) {
+    return supabase.from("admin_access_requests")
   }
 
   async createAdminRequest(userId: string, reason: string): Promise<void> {

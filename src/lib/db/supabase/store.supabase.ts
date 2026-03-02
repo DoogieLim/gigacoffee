@@ -9,8 +9,8 @@ export class SupabaseStoreRepository implements StoreRepository {
 
   // stores 테이블은 gigacoffee 스키마에 있으며 자동 생성 타입 미포함
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private storesTable(supabase: any) {
-    return (supabase as { from: (table: string) => any }).from("stores")
+  private storesTable(supabase: { from: (table: string) => any }) {
+    return supabase.from("stores")
   }
 
   async findAll(activeOnly = false): Promise<Store[]> {
