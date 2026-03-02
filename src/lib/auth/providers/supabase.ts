@@ -22,10 +22,34 @@ export class SupabaseAuthProvider implements AuthProvider {
     type ProfileData = { name: string; phone: string | null; avatar_url: string | null; fcm_token: string | null }
     const profile = profileData as unknown as ProfileData | null
 
+    // 역할 정보 조회: user_roles(중간 테이블) JOIN roles(역할 정의)
+    // 구 스키마: roles.user_id + roles.role → 신 스키마: user_roles.role_id → roles.name
+    // 한 사용자에게 복수 역할이 있을 수 있으므로 배열로 조회
+    const { data: roleRows } = await this.supabase
+      .from("user_roles")
+      .select("role:roles(name)")
+      .eq("user_id", user.id)
+
+    type RoleRow = { role: { name: string } | null }
+    const roleNames = ((roleRows ?? []) as unknown as RoleRow[])
+      .map((r) => r.role?.name ?? "")
+      .filter(Boolean)
+
+    // 우선순위: admin > franchise_admin > staff > kiosk > member
+    // 관리자 라우트(/admin) 접근 허용 여부는 layout.tsx에서 재검증함
+    const PRIORITY_ROLES = ["admin", "franchise_admin", "staff", "kiosk"]
+    const role = PRIORITY_ROLES.find((r) => roleNames.includes(r)) ?? roleNames[0] ?? undefined
+
+    // kiosk 계정 여부: "kiosk" 역할 우선, 없으면 환경변수 이메일 비교 (fallback)
+    const kioskEmail = process.env.NEXT_PUBLIC_KIOSK_EMAIL ?? undefined
+    const isKiosk = role === "kiosk" || (kioskEmail ? user.email === kioskEmail : false)
+
     return {
       id: user.id,
       email: user.email ?? "",
       name: profile?.name ?? user.email ?? "",
+      role,
+      isKiosk,
       phone: profile?.phone ?? null,
       avatar_url: profile?.avatar_url ?? null,
       fcm_token: profile?.fcm_token ?? null,
