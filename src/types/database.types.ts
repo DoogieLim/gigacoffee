@@ -133,7 +133,7 @@ export type Database = {
         Row: {
           id: string
           user_id: string
-          status: "pending" | "paid" | "preparing" | "ready" | "completed" | "cancelled"
+          status: "pending" | "paid" | "preparing" | "out_for_delivery" | "ready" | "completed" | "cancelled"
           total_amount: number
           memo: string | null
           delivery_type: string
@@ -324,7 +324,7 @@ export type Database = {
       notification_logs: {
         Row: {
           id: string
-          type: "kakao" | "push" | "sms"
+          type: "kakao" | "push" | "sms" | "email"
           recipient_id: string
           event_type: string
           payload: Json
@@ -334,7 +334,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          type: "kakao" | "push" | "sms"
+          type: "kakao" | "push" | "sms" | "email"
           recipient_id: string
           event_type: string
           payload?: Json

@@ -7,7 +7,7 @@ export interface NotificationPayload {
 }
 
 export interface NotificationResult {
-  channel: "kakao" | "push" | "sms"
+  channel: "kakao" | "push" | "sms" | "email"
   success: boolean
   error?: string
 }

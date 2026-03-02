@@ -1,5 +1,6 @@
 import { createServiceClient } from "@/lib/supabase/server"
 import type { AdminAccessRequest, RoleRepository, UserRoleRow } from "../repositories/role.repository"
+import type { Store } from "@/types/store.types"
 
 export class SupabaseRoleRepository implements RoleRepository {
   private async db() {
@@ -10,12 +11,40 @@ export class SupabaseRoleRepository implements RoleRepository {
     const supabase = await this.db()
     const { data } = await supabase
       .from("user_roles")
-      .select("user_id, profile:profiles(name, email), role:roles(name)")
+      .select("user_id, store_id, profile:profiles(name, email), role:roles(name)")
     return ((data ?? []) as unknown as Array<{
       user_id: string
+      store_id: string | null
       profile: { name: string; email: string } | null
       role: { name: string } | null
-    }>).map((r) => ({ userId: r.user_id, profile: r.profile, role: r.role }))
+    }>).map((r) => ({ userId: r.user_id, storeId: r.store_id, profile: r.profile, role: r.role }))
+  }
+
+  async findUserStores(userId: string): Promise<Store[]> {
+    const supabase = await this.db()
+    const { data } = await supabase
+      .from("user_roles")
+      .select("store:stores(*)")
+      .eq("user_id", userId)
+      .not("store_id", "is", null)
+    const stores = ((data ?? []) as unknown as Array<{ store: Store | null }>)
+      .map((r) => r.store)
+      .filter((s): s is Store => s !== null)
+    return stores
+  }
+
+  async isFranchiseAdmin(userId: string): Promise<boolean> {
+    const supabase = await this.db()
+    const { data } = await supabase
+      .from("user_roles")
+      .select("store_id, role:roles(name)")
+      .eq("user_id", userId)
+      .is("store_id", null)
+    const rows = (data ?? []) as unknown as Array<{ store_id: string | null; role: { name: string } | null }>
+    return rows.some((r) =>
+      r.store_id === null &&
+      (r.role?.name === "admin" || r.role?.name === "franchise_admin")
+    )
   }
 
   async findPendingAdminRequests(): Promise<AdminAccessRequest[]> {
@@ -86,6 +115,7 @@ export class SupabaseRoleRepository implements RoleRepository {
       role_id: adminRoleId,
       granted_by: reviewerId,
       granted_at: new Date().toISOString(),
+      store_id: null,  // 기본 승인은 프랜차이즈 레벨
     })
   }
 

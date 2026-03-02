@@ -1,11 +1,27 @@
 "use server"
 
+import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { boardRepo } from "@/lib/db"
+import { getAdminStoreId } from "@/lib/utils/admin-store"
 import type { CreatePostInput, PostCategory, CreateCommentInput } from "@/types/board.types"
 
+// 사용자 쿠키에서 선택된 매장 ID 읽기
+async function getUserStoreId(): Promise<string | null> {
+  const cookieStore = await cookies()
+  return cookieStore.get("user_store_id")?.value ?? null
+}
+
+// 사용자 게시판: 선택된 매장 공지 + 전체 공지 표시
 export async function getPosts(category?: PostCategory, page = 1, limit = 20) {
-  return boardRepo.findPosts({ category, page, limit })
+  const storeId = await getUserStoreId()
+  return boardRepo.findPosts({ category, page, limit, storeId: storeId ?? undefined })
+}
+
+// 관리자 게시판: admin_store_id 쿠키 기반 필터
+export async function getAdminPosts(limit = 50) {
+  const storeId = await getAdminStoreId()
+  return boardRepo.findAllForAdmin(limit, storeId)
 }
 
 export async function createPost(input: CreatePostInput) {

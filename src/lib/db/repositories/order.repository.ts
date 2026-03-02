@@ -3,6 +3,7 @@ import type { Json } from "@/types/database.types"
 
 export interface CreateOrderData {
   userId: string
+  storeId?: string | null
   totalAmount: number
   memo?: string | null
   deliveryType: DeliveryType
@@ -32,10 +33,11 @@ export interface SalesOrderRow {
 export interface OrderRepository {
   create(data: CreateOrderData): Promise<Order>
   insertItems(items: CreateOrderItemData[]): Promise<void>
-  findById(id: string): Promise<{ total_amount: number; user_id: string } | null>
+  findById(id: string): Promise<{ total_amount: number; user_id: string; delivery_type: string } | null>
+  findItemsByOrderId(orderId: string): Promise<{ product_name: string; quantity: number }[]>
   findByUser(userId: string): Promise<OrderWithItems[]>
-  findAll(limit?: number): Promise<Order[]>
-  findToday(): Promise<Order[]>
-  findForSales(from: Date): Promise<SalesOrderRow[]>
+  findAll(limit?: number, storeId?: string | null): Promise<Order[]>
+  findToday(storeId?: string | null): Promise<Order[]>
+  findForSales(from: Date, storeId?: string | null): Promise<SalesOrderRow[]>
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>
 }

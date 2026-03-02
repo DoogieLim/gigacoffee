@@ -2,7 +2,7 @@ import { createHmac } from "crypto"
 import type { NotificationPayload, NotificationResult } from "./types"
 
 function getSolapiAuthHeader(): string {
-  const date = new Date().toISOString()
+  const date = new Date().toISOString().replace(/\.\d{3}Z$/, "Z")
   const salt = crypto.randomUUID()
   const signature = createHmac("sha256", process.env.SOLAPI_API_SECRET!)
     .update(date + salt)

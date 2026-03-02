@@ -1,9 +1,9 @@
-import { boardRepo } from "@/lib/db"
+import { getAdminPosts } from "@/actions/board.actions"
 import { formatDateTime } from "@/lib/utils/format"
 import { Badge } from "@/components/ui/Badge"
 
 export default async function AdminBoardPage() {
-  const posts = await boardRepo.findAllForAdmin(50)
+  const posts = await getAdminPosts(50)
 
   return (
     <div className="flex flex-col gap-6">

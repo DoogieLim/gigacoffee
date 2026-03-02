@@ -1,15 +1,26 @@
 "use client"
 
 import { useState, useEffect, useRef, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { ProductGrid } from "@/components/menu/ProductGrid"
 import { CategoryFilterClient } from "@/components/menu/CategoryFilterClient"
 import { Spinner } from "@/components/ui/Spinner"
+import { useCartStore } from "@/stores/cartStore"
+import { ROUTES } from "@/lib/constants/routes"
 import type { Product, Category } from "@/types/product.types"
 
 function MenuPageContent() {
   const searchParams = useSearchParams()
   const categoryId = searchParams.get("categoryId")
+  const router = useRouter()
+  const currentStoreId = useCartStore((s) => s.currentStoreId)
+
+  // 매장 미선택 시 매장 선택 페이지로 이동
+  useEffect(() => {
+    if (currentStoreId === null) {
+      router.replace(ROUTES.STORES)
+    }
+  }, [currentStoreId, router])
 
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])

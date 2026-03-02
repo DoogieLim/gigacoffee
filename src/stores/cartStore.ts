@@ -6,6 +6,7 @@ interface CartStore {
   items: CartItem[]
   deliveryType: DeliveryType
   deliveryAddress: DeliveryAddress | null
+  currentStoreId: string | null
   addItem: (item: CartItem) => void
   removeItem: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
@@ -13,6 +14,7 @@ interface CartStore {
   getTotal: () => number
   setDeliveryType: (type: DeliveryType) => void
   setDeliveryAddress: (address: DeliveryAddress | null) => void
+  setCurrentStore: (storeId: string) => void
 }
 
 export const useCartStore = create<CartStore>()(
@@ -21,6 +23,7 @@ export const useCartStore = create<CartStore>()(
       items: [],
       deliveryType: "pickup",
       deliveryAddress: null,
+      currentStoreId: null,
 
       addItem: (newItem) => {
         set((state) => {
@@ -68,6 +71,11 @@ export const useCartStore = create<CartStore>()(
 
       setDeliveryAddress: (address) => {
         set({ deliveryAddress: address })
+      },
+
+      setCurrentStore: (storeId) => {
+        // 매장 변경 시 장바구니 초기화 (다른 매장 상품 혼합 방지)
+        set({ currentStoreId: storeId, items: [], deliveryAddress: null })
       },
     }),
     { name: "cart-storage" }

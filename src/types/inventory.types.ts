@@ -2,6 +2,7 @@ export type StockHistoryType = "in" | "out" | "adjust" | "cancel"
 
 export interface Inventory {
   product_id: string
+  store_id: string
   quantity: number
   low_stock_threshold: number
   updated_at: string
@@ -15,6 +16,7 @@ export interface Inventory {
 export interface StockHistory {
   id: string
   product_id: string
+  store_id: string | null
   change_qty: number
   reason: string | null
   type: StockHistoryType

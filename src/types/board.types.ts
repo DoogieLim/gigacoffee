@@ -3,6 +3,7 @@ export type PostCategory = "notice" | "qna" | "review" | "free"
 export interface Post {
   id: string
   author_id: string
+  store_id: string | null  // null = 전체(프랜차이즈) 게시글
   category: PostCategory
   title: string
   content: string

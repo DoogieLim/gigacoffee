@@ -3,6 +3,7 @@ export const ROUTES = {
   LOGIN: "/login",
   REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
+  STORES: "/stores",
   MENU: "/menu",
   ORDER: "/order",
   ORDER_CHECKOUT: "/order/checkout",
@@ -21,4 +22,5 @@ export const ROUTES = {
   ADMIN_BOARD: "/admin/board",
   ADMIN_ROLES: "/admin/roles",
   ADMIN_DELIVERY: "/admin/delivery",
+  ADMIN_STORES: "/admin/stores",
 } as const

@@ -1,8 +1,10 @@
 import { orderRepo } from "@/lib/db"
+import { getAdminStoreId } from "@/lib/utils/admin-store"
 import { OrdersClient } from "@/components/admin/OrdersClient"
 
 export default async function AdminOrdersPage() {
-  const initialOrders = await orderRepo.findAll(50)
+  const storeId = await getAdminStoreId()
+  const initialOrders = await orderRepo.findAll(50, storeId)
 
   return (
     <div className="flex flex-col gap-6">

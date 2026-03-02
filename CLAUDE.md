@@ -112,6 +112,41 @@ export { SupabaseAuthProvider as AuthProviderClass } from './providers/supabase'
 
 **발송 흐름:** 이벤트 발생 → `src/lib/notifications/dispatcher.ts` → 병렬 발송 → `notification_logs` 기록
 
+### FCM 웹 푸시 구조
+
+- SW: `src/app/firebase-messaging-sw.js/route.ts` — Firebase SDK 없는 순수 커스텀 push 핸들러
+- 포그라운드(탭 열림): SW → `postMessage({ type: 'FCM_FOREGROUND' })` → `FcmInitializer` → 인앱 토스트
+- 백그라운드(탭 없음): SW → `showNotification()` → OS 알림
+- 토큰 등록: `useFcmToken` hook → `getToken()` → `profiles.fcm_token` 저장
+
+### FCM 개발 환경 트러블슈팅 (반드시 확인)
+
+FCM 푸시가 Firebase Admin에서 `success: true`를 반환하는데도 브라우저에 도달하지 않을 때:
+
+**1순위: Chrome GCM 연결 상태 확인 → `chrome://gcm-internals/`**
+- `Connection State: CONNECTING` → **Chrome을 완전히 종료(Cmd+Q) 후 재시작** 필수
+- `Connection State: CONNECTED` → 연결 정상, 다른 원인 확인
+- `Receive Message Log` 비어 있음 → FCM이 Chrome에 전달 자체를 못 하고 있음
+
+**2순위: SW 조작 후 FCM 토큰 무효화**
+- Service Worker를 Unregister하면 push subscription이 삭제되어 기존 FCM 토큰이 무효화됨
+- 해결: DevTools → Application → IndexedDB → `firebase-messaging-database` 삭제 → 페이지 새로고침 → 알림 권한 재허용 → 새 토큰 등록
+- SW를 반복 조작하면 GCM 연결 자체가 불안정해짐 → Chrome 재시작으로 해결
+
+**3순위: SW 업데이트 미반영**
+- SW는 브라우저가 캐시하므로 코드 변경 후 DevTools → Application → Service Workers → `skipWaiting` 클릭 또는 새로고침 필요
+- SW에 `skipWaiting()` + `clients.claim()` 구현되어 있으므로 새로고침 한 번으로 갱신됨
+
+**단계별 진단 방법**
+```
+1. DevTools Push 버튼(JSON payload)으로 SW 자체 테스트 → 토스트 뜨면 SW 정상
+2. chrome://gcm-internals/ → Connection State 확인
+3. curl 테스트 후 Receive Message Log 확인 → 항목 없으면 Chrome 재시작
+4. Receive Message Log에 항목 있는데 토스트 없으면 → SW 핸들러 에러 (DevTools SW 콘솔 확인)
+```
+
+**주의**: `chrome://push-internals/`는 최신 Chrome에서 제거됨. `chrome://gcm-internals/` 사용.
+
 ## 재고 관리
 
 - **자동 차감:** 주문 `status='paid'` → DB 트리거로 `inventory.quantity` 차감 + `stock_histories` 기록

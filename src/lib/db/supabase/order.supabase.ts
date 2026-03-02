@@ -19,6 +19,7 @@ export class SupabaseOrderRepository implements OrderRepository {
       .from("orders")
       .insert({
         user_id: data.userId,
+        store_id: data.storeId ?? null,
         total_amount: data.totalAmount,
         memo: data.memo ?? null,
         delivery_type: data.deliveryType,
@@ -45,14 +46,23 @@ export class SupabaseOrderRepository implements OrderRepository {
     )
   }
 
-  async findById(id: string): Promise<{ total_amount: number; user_id: string } | null> {
+  async findById(id: string): Promise<{ total_amount: number; user_id: string; delivery_type: string } | null> {
     const supabase = await this.db()
     const { data } = await supabase
       .from("orders")
-      .select("total_amount, user_id")
+      .select("total_amount, user_id, delivery_type")
       .eq("id", id)
       .single()
-    return data as { total_amount: number; user_id: string } | null
+    return data as { total_amount: number; user_id: string; delivery_type: string } | null
+  }
+
+  async findItemsByOrderId(orderId: string): Promise<{ product_name: string; quantity: number }[]> {
+    const supabase = await this.db()
+    const { data } = await supabase
+      .from("order_items")
+      .select("product_name, quantity")
+      .eq("order_id", orderId)
+    return (data ?? []) as { product_name: string; quantity: number }[]
   }
 
   async findByUser(userId: string): Promise<OrderWithItems[]> {
@@ -65,35 +75,41 @@ export class SupabaseOrderRepository implements OrderRepository {
     return (data ?? []) as unknown as OrderWithItems[]
   }
 
-  async findAll(limit = 50): Promise<Order[]> {
+  async findAll(limit = 50, storeId?: string | null): Promise<Order[]> {
     const supabase = await this.db()
-    const { data } = await supabase
+    let query = supabase
       .from("orders")
-      .select("*")
+      .select("*, order_items(id, product_name, quantity, options, line_total)")
       .order("created_at", { ascending: false })
       .limit(limit)
+    if (storeId) query = query.eq("store_id", storeId)
+    const { data } = await query
     return (data ?? []) as unknown as Order[]
   }
 
-  async findToday(): Promise<Order[]> {
+  async findToday(storeId?: string | null): Promise<Order[]> {
     const supabase = await this.db()
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const { data } = await supabase
+    let query = supabase
       .from("orders")
       .select("id, total_amount, status, delivery_type, delivery_fee, created_at, user_id, memo, updated_at")
       .gte("created_at", today.toISOString())
       .order("created_at", { ascending: false })
+    if (storeId) query = query.eq("store_id", storeId)
+    const { data } = await query
     return (data ?? []) as unknown as Order[]
   }
 
-  async findForSales(from: Date): Promise<SalesOrderRow[]> {
+  async findForSales(from: Date, storeId?: string | null): Promise<SalesOrderRow[]> {
     const supabase = await this.db()
-    const { data } = await supabase
+    let query = supabase
       .from("orders")
       .select("total_amount, created_at, status")
       .gte("created_at", from.toISOString())
       .neq("status", "cancelled")
+    if (storeId) query = query.eq("store_id", storeId)
+    const { data } = await query
     return (data ?? []) as SalesOrderRow[]
   }
 
@@ -101,7 +117,8 @@ export class SupabaseOrderRepository implements OrderRepository {
     const supabase = await this.db()
     const { data, error } = await supabase
       .from("orders")
-      .update({ status })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .update({ status: status as any })
       .eq("id", orderId)
       .select()
       .single()

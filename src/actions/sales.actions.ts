@@ -1,17 +1,20 @@
 "use server"
 
 import { orderRepo } from "@/lib/db"
+import { getAdminStoreId } from "@/lib/utils/admin-store"
 
 export type Period = "today" | "week" | "month"
 
 export async function getSalesData(period: Period) {
+  const storeId = await getAdminStoreId()
+
   const now = new Date()
   const from = new Date()
   if (period === "today") from.setHours(0, 0, 0, 0)
   else if (period === "week") from.setDate(now.getDate() - 7)
   else from.setDate(1)
 
-  const orders = await orderRepo.findForSales(from)
+  const orders = await orderRepo.findForSales(from, storeId)
 
   const salesByDate: Record<string, { amount: number; orders: number }> = {}
   let totalSales = 0

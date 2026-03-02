@@ -1,27 +1,39 @@
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  const config = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-  }
-
+  // Firebase compat SDK 없이 순수 커스텀 push 핸들러만 사용.
+  // getToken()은 SW 등록 객체만 있으면 동작하므로 SW 내부에 Firebase 코드 불필요.
+  // - 열린 탭이 있으면 → postMessage({ type: 'FCM_FOREGROUND' }) → 인앱 토스트
+  // - 열린 탭이 없으면 → showNotification → OS 알림
   const swContent = `
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js")
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js")
+self.addEventListener('install', () => { self.skipWaiting() })
+self.addEventListener('activate', (event) => { event.waitUntil(clients.claim()) })
 
-firebase.initializeApp(${JSON.stringify(config)})
+self.addEventListener('push', (event) => {
+  let payload = {}
+  try { payload = event.data ? event.data.json() : {} } catch(e) {}
+  const title = (payload.notification && payload.notification.title) || '알림'
+  const body = (payload.notification && payload.notification.body) || ''
 
-const messaging = firebase.messaging()
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      if (clientList.length > 0) {
+        clientList.forEach((client) => {
+          client.postMessage({ type: 'FCM_FOREGROUND', payload: payload })
+        })
+      } else {
+        return self.registration.showNotification(title, {
+          body: body,
+          icon: '/icon-192x192.png',
+        })
+      }
+    })
+  )
+})
 
-messaging.onBackgroundMessage((payload) => {
-  const { title, body } = payload.notification ?? {}
-  if (!title) return
-  self.registration.showNotification(title, {
-    body: body ?? "",
-    icon: "/icon-192x192.png",
-  })
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  event.waitUntil(clients.openWindow('/'))
 })
 `
 

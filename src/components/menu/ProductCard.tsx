@@ -28,6 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/menu/${product.id}`}
+      data-testid="product-card"
       className="group relative flex flex-col items-center p-3 transition-transform active:scale-95"
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] bg-neutral-100 shadow-premium">

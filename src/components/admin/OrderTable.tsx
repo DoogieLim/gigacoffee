@@ -19,47 +19,87 @@ const deliveryVariant: Record<DeliveryType, "default" | "info" | "warning" | "su
   rider: "warning",
 }
 
-interface OrderTableProps {
-  orders: Order[]
-  onStatusChange?: (orderId: string, status: Order["status"]) => void
-}
-
 const statusVariant: Record<Order["status"], "default" | "info" | "warning" | "success" | "danger"> = {
   pending: "warning",
   paid: "info",
   preparing: "warning",
+  out_for_delivery: "info",
   ready: "success",
   completed: "default",
   cancelled: "danger",
 }
 
-export function OrderTable({ orders, onStatusChange }: OrderTableProps) {
+function getStatusOptions(deliveryType: DeliveryType): Order["status"][] {
+  if (deliveryType === "robot" || deliveryType === "rider") {
+    return ["paid", "preparing", "out_for_delivery", "completed", "cancelled"]
+  }
+  return ["paid", "preparing", "ready", "completed", "cancelled"]
+}
+
+interface OrderTableProps {
+  orders: Order[]
+  onStatusChange?: (orderId: string, status: Order["status"]) => void
+  changingId?: string | null
+}
+
+export function OrderTable({ orders, onStatusChange, changingId }: OrderTableProps) {
+  if (orders.length === 0) {
+    return <p className="py-8 text-center text-sm text-gray-400">주문이 없습니다.</p>
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b text-left text-gray-500">
+          <tr className="border-b text-left text-xs text-gray-500">
             <th className="pb-3 pr-4 font-medium">주문번호</th>
-            <th className="pb-3 pr-4 font-medium">주문시각</th>
+            <th className="pb-3 pr-4 font-medium">시각</th>
             <th className="pb-3 pr-4 font-medium">유형</th>
+            <th className="pb-3 pr-4 font-medium">주문 내역</th>
             <th className="pb-3 pr-4 font-medium">금액</th>
             <th className="pb-3 pr-4 font-medium">상태</th>
-            {onStatusChange && <th className="pb-3 font-medium">변경</th>}
+            {onStatusChange && <th className="pb-3 font-medium">상태 변경</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {orders.map((order) => {
             const deliveryType = (order.delivery_type ?? "pickup") as DeliveryType
+            const isChanging = changingId === order.id
+            const items = order.order_items ?? []
+
             return (
-              <tr key={order.id}>
-                <td className="py-3 pr-4 font-mono text-xs text-gray-600">{order.id.slice(0, 8)}...</td>
-                <td className="py-3 pr-4 text-gray-600">{formatDateTime(order.created_at)}</td>
+              <tr key={order.id} className={isChanging ? "opacity-60" : ""}>
+                <td className="py-3 pr-4 font-mono text-xs text-gray-500">
+                  {order.id.slice(0, 8).toUpperCase()}
+                </td>
+                <td className="py-3 pr-4 text-xs text-gray-500 whitespace-nowrap">
+                  {formatDateTime(order.created_at)}
+                </td>
                 <td className="py-3 pr-4">
                   <Badge variant={deliveryVariant[deliveryType]}>
                     {DELIVERY_TYPE_LABELS[deliveryType]}
                   </Badge>
                 </td>
-                <td className="py-3 pr-4 font-semibold">{formatPrice(order.total_amount)}</td>
+                <td className="py-3 pr-4 max-w-[200px]">
+                  {items.length > 0 ? (
+                    <ul className="space-y-0.5">
+                      {(items as { product_name: string; quantity: number }[]).map((item, i) => (
+                        <li key={i} className="text-xs text-gray-700">
+                          {item.product_name}
+                          <span className="ml-1 text-gray-400">×{item.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-xs text-gray-400">—</span>
+                  )}
+                  {order.memo && (
+                    <p className="mt-1 text-xs text-amber-600">요청: {order.memo}</p>
+                  )}
+                </td>
+                <td className="py-3 pr-4 font-semibold whitespace-nowrap">
+                  {formatPrice(order.total_amount)}
+                </td>
                 <td className="py-3 pr-4">
                   <Badge variant={statusVariant[order.status]}>
                     {ORDER_STATUS_LABELS[order.status]}
@@ -69,13 +109,19 @@ export function OrderTable({ orders, onStatusChange }: OrderTableProps) {
                   <td className="py-3">
                     <select
                       value={order.status}
+                      disabled={isChanging}
                       onChange={(e) => onStatusChange(order.id, e.target.value as Order["status"])}
-                      className="rounded border border-gray-300 px-2 py-1 text-xs"
+                      className="rounded border border-gray-300 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {Object.entries(ORDER_STATUS_LABELS).map(([value, label]) => (
-                        <option key={value} value={value}>{label}</option>
+                      {getStatusOptions(deliveryType).map((value) => (
+                        <option key={value} value={value}>
+                          {ORDER_STATUS_LABELS[value]}
+                        </option>
                       ))}
                     </select>
+                    {isChanging && (
+                      <span className="ml-2 text-xs text-gray-400">저장 중...</span>
+                    )}
                   </td>
                 )}
               </tr>

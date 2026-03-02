@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { orderRepo } from "@/lib/db"
 import { formatDateTime, formatPrice } from "@/lib/utils/format"
@@ -21,7 +22,7 @@ export default async function MyOrdersPage() {
           <p className="text-center text-gray-500 py-12">주문 내역이 없습니다.</p>
         ) : (
           orders.map((order) => (
-            <div key={order.id} className="rounded-xl border border-gray-200 bg-white p-4">
+            <Link key={order.id} href={`/my/orders/${order.id}`} className="block rounded-xl border border-gray-200 bg-white p-4 transition hover:border-amber-300 hover:shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs text-gray-500">{formatDateTime(order.created_at)}</span>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${ORDER_STATUS_COLORS[order.status as keyof typeof ORDER_STATUS_COLORS]}`}>
@@ -33,8 +34,11 @@ export default async function MyOrdersPage() {
                   <span key={i}>{item.product_name}</span>
                 )).reduce((acc: React.ReactNode[], el, i) => i === 0 ? [el] : [...acc, ", ", el], [])}
               </div>
-              <div className="mt-2 font-semibold text-amber-700">{formatPrice(order.total_amount)}</div>
-            </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="font-semibold text-amber-700">{formatPrice(order.total_amount)}</span>
+                <span className="text-xs text-gray-400">실시간 추적 &rarr;</span>
+              </div>
+            </Link>
           ))
         )}
       </div>

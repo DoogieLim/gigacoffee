@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="25%" y1="0%" x2="75%" y2="100%">
+      <stop offset="0%" stop-color="#1E0E06"/>
+      <stop offset="100%" stop-color="#070402"/>
+    </linearGradient>
+
+    <!-- Top warm glow -->
+    <radialGradient id="topGlow" cx="50%" cy="0%" r="65%">
+      <stop offset="0%" stop-color="#8B4010" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Cup body gradient -->
+    <linearGradient id="cupBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF1DE"/>
+      <stop offset="100%" stop-color="#D8AE72"/>
+    </linearGradient>
+
+    <!-- Cup right shading -->
+    <linearGradient id="cupShade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.14)"/>
+    </linearGradient>
+
+    <!-- Handle gold gradient -->
+    <linearGradient id="handleGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EEC040"/>
+      <stop offset="50%" stop-color="#D09820"/>
+      <stop offset="100%" stop-color="#A87010"/>
+    </linearGradient>
+
+    <!-- Steam gradient (fades out at top) -->
+    <linearGradient id="steamFade" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#D4A020" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#D4A020" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Glow filter for steam -->
+    <filter id="steamGlow" x="-40%" y="-20%" width="180%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Soft shadow filter -->
+    <filter id="cupShadow" x="-10%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+
+    <!-- Bottom ambient glow -->
+    <radialGradient id="bottomGlow" cx="50%" cy="95%" r="45%">
+      <stop offset="0%" stop-color="#C07820" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- === BACKGROUND === -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#topGlow)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#bottomGlow)"/>
+
+  <!-- === STEAM WISPS (drawn behind cup) === -->
+  <!-- Left steam -->
+  <path d="M416 458 C394 422 436 386 414 350 C392 314 434 278 412 242"
+        stroke="url(#steamFade)" stroke-width="15" fill="none"
+        stroke-linecap="round" filter="url(#steamGlow)" opacity="0.85"/>
+
+  <!-- Center steam (thicker, brighter) -->
+  <path d="M512 444 C486 404 538 364 512 324 C486 284 538 244 512 204"
+        stroke="url(#steamFade)" stroke-width="20" fill="none"
+        stroke-linecap="round" filter="url(#steamGlow)"/>
+
+  <!-- Right steam -->
+  <path d="M608 458 C630 422 588 386 610 350 C632 314 590 278 612 242"
+        stroke="url(#steamFade)" stroke-width="15" fill="none"
+        stroke-linecap="round" filter="url(#steamGlow)" opacity="0.85"/>
+
+  <!-- === CUP GROUP (with drop shadow) === -->
+  <g filter="url(#cupShadow)">
+
+    <!-- Cup rim (rounded rect) -->
+    <rect x="318" y="472" width="388" height="56" rx="28" fill="url(#cupBody)"/>
+    <!-- Rim top highlight -->
+    <rect x="318" y="472" width="388" height="28" rx="28" fill="rgba(255,255,255,0.18)"/>
+
+    <!-- Cup body (trapezoid) -->
+    <polygon points="336,528 688,528 624,752 400,752" fill="url(#cupBody)"/>
+
+    <!-- Cup body right shading -->
+    <polygon points="336,528 688,528 624,752 400,752" fill="url(#cupShade)"/>
+
+    <!-- Coffee liquid surface -->
+    <ellipse cx="512" cy="528" rx="174" ry="17" fill="#5A2E12" opacity="0.5"/>
+    <!-- Coffee surface highlight (crema) -->
+    <ellipse cx="486" cy="525" rx="58" ry="7" fill="rgba(255,235,180,0.28)"/>
+    <ellipse cx="558" cy="526" rx="24" ry="5" fill="rgba(255,235,180,0.18)"/>
+
+    <!-- Handle (D-shape, gold ring) -->
+    <!-- Outer gold stroke -->
+    <path d="M686 566 Q812 566 812 658 Q812 750 688 750"
+          stroke="url(#handleGold)" stroke-width="48" fill="none" stroke-linecap="round"/>
+    <!-- Inner cutout (background color) -->
+    <path d="M686 566 Q774 566 774 658 Q774 750 688 750"
+          stroke="#0E0804" stroke-width="30" fill="none" stroke-linecap="round"/>
+    <!-- Handle inner highlight -->
+    <path d="M686 566 Q812 566 812 658 Q812 750 688 750"
+          stroke="rgba(255,240,160,0.2)" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+    <!-- Saucer -->
+    <ellipse cx="512" cy="784" rx="264" ry="33" fill="url(#cupBody)"/>
+    <!-- Saucer indent ring -->
+    <ellipse cx="512" cy="784" rx="120" ry="14" fill="rgba(0,0,0,0.2)"/>
+    <!-- Saucer highlight -->
+    <ellipse cx="484" cy="778" rx="98" ry="8" fill="rgba(255,255,255,0.26)"/>
+
+  </g>
+
+  <!-- === BRAND MARK: stylized G inside cup === -->
+  <!-- Subtle embossed G letterform on cup front -->
+  <text x="512" y="672" font-family="Georgia, serif" font-size="120"
+        font-weight="700" text-anchor="middle" fill="rgba(100,55,15,0.22)"
+        letter-spacing="-2">G</text>
+
+</svg>

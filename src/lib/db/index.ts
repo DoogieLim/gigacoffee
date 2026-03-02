@@ -18,6 +18,7 @@ import type { NotificationRepository } from "./repositories/notification.reposit
 import type { RoleRepository } from "./repositories/role.repository"
 import type { PaymentRepository } from "./repositories/payment.repository"
 import type { DeliveryRepository } from "./repositories/delivery.repository"
+import type { StoreRepository } from "./repositories/store.repository"
 
 import { SupabaseProductRepository } from "./supabase/product.supabase"
 import { SupabaseOrderRepository } from "./supabase/order.supabase"
@@ -28,6 +29,7 @@ import { SupabaseNotificationRepository } from "./supabase/notification.supabase
 import { SupabaseRoleRepository } from "./supabase/role.supabase"
 import { SupabasePaymentRepository } from "./supabase/payment.supabase"
 import { SupabaseDeliveryRepository } from "./supabase/delivery.supabase"
+import { SupabaseStoreRepository } from "./supabase/store.supabase"
 
 export const productRepo: ProductRepository = new SupabaseProductRepository()
 export const orderRepo: OrderRepository = new SupabaseOrderRepository()
@@ -38,3 +40,4 @@ export const notificationRepo: NotificationRepository = new SupabaseNotification
 export const roleRepo: RoleRepository = new SupabaseRoleRepository()
 export const paymentRepo: PaymentRepository = new SupabasePaymentRepository()
 export const deliveryRepo: DeliveryRepository = new SupabaseDeliveryRepository()
+export const storeRepo: StoreRepository = new SupabaseStoreRepository()

@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/actions/auth.actions"
 import { ROUTES } from "@/lib/constants/routes"
 import { signOutAction } from "@/actions/auth.actions"
 import { Button } from "@/components/ui/Button"
+import { FcmTokenButton } from "@/components/notifications/FcmTokenButton"
 
 export default async function MyPage() {
   const user = await getCurrentUser()
@@ -35,6 +36,7 @@ export default async function MyPage() {
             <span className="font-medium">프로필 수정</span>
             <span className="text-gray-400">›</span>
           </Link>
+          <FcmTokenButton />
         </nav>
         <form action={signOutAction}>
           <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50">

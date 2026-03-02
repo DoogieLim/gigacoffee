@@ -1,7 +1,7 @@
 import type { NotificationLog } from "@/types/notification.types"
 
 export interface InsertNotificationLogData {
-  type: "kakao" | "push" | "sms"
+  type: "kakao" | "push" | "sms" | "email"
   recipientId: string
   eventType: string
   payload: unknown

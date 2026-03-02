@@ -12,9 +12,9 @@ test.describe("인증 페이지", () => {
     await page.goto("/login")
     await page.getByLabel(/이메일/).fill("invalid@example.com")
     await page.getByLabel(/비밀번호/).fill("wrongpassword")
-    await page.getByRole("button", { name: /로그인/ }).click()
-    // 에러 메시지가 표시되어야 함
-    await expect(page.getByText(/실패|오류|잘못/)).toBeVisible({ timeout: 5000 })
+    await page.getByRole("button", { name: "로그인", exact: true }).click()
+    // 에러 메시지가 표시되어야 함 (Supabase API 응답 대기 포함)
+    await expect(page.getByText(/실패|오류|잘못|invalid|credentials/i)).toBeVisible({ timeout: 10000 })
   })
 
   test("비인증 상태에서 관리자 페이지 접근 시 리다이렉트", async ({ page }) => {

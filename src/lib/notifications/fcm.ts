@@ -48,16 +48,22 @@ function buildPushMessage(
   eventType: string,
   data: Record<string, string>
 ): { title: string; body: string } {
+  const deliveryLabel = data.deliveryType === "robot" ? "로봇" : "라이더"
   const messages: Record<string, { title: string; body: string }> = {
-    ORDER_PAID: { title: "주문 완료", body: "주문이 완료되었습니다." },
-    ORDER_PREPARING: { title: "준비 중", body: "음료를 준비 중입니다." },
-    ORDER_READY: { title: "픽업 가능!", body: "음료가 준비되었습니다. 픽업해주세요!" },
-    ORDER_CANCELLED: { title: "주문 취소", body: "주문이 취소되었습니다." },
+    ORDER_PAID:             { title: "주문 접수 완료", body: "주문이 접수되었습니다. 곧 제작을 시작합니다." },
+    ORDER_PREPARING:        { title: "음료 제작 중", body: "바리스타가 음료를 제작하고 있습니다." },
+    ORDER_OUT_FOR_DELIVERY: { title: "배달 출발!", body: `${deliveryLabel}이 배달을 시작했습니다.` },
+    ORDER_READY:            { title: "픽업 가능!", body: "음료가 준비됐습니다. 카운터에서 찾아가세요!" },
+    ORDER_COMPLETED:        { title: "배달 완료", body: "음료가 도착했습니다. 맛있게 드세요!" },
+    ORDER_CANCELLED:        { title: "주문 취소", body: "주문이 취소되었습니다." },
     LOW_STOCK: {
       title: "재고 부족 알림",
       body: `[${data.productName}] 재고가 ${data.quantity}개 이하입니다.`,
     },
-    NEW_ORDER: { title: "새 주문", body: "새 주문이 들어왔습니다." },
+    NEW_ORDER: {
+      title: "새 주문 도착",
+      body: data.orderSummary ?? "새 주문이 들어왔습니다.",
+    },
   }
   return messages[eventType] ?? { title: "GigaCoffee 알림", body: data.message ?? "알림이 도착했습니다." }
 }

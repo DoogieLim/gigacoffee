@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { inventoryRepo, productRepo } from "@/lib/db"
 import { dispatch } from "@/lib/notifications/dispatcher"
+import { getAdminStoreId } from "@/lib/utils/admin-store"
 import type { AdjustStockInput } from "@/types/inventory.types"
 
 export async function adjustStock(input: AdjustStockInput) {
@@ -12,12 +13,15 @@ export async function adjustStock(input: AdjustStockInput) {
   } = await supabase.auth.getUser()
   if (!user) throw new Error("로그인이 필요합니다.")
 
-  const inv = await inventoryRepo.findByProduct(input.product_id)
+  const storeId = await getAdminStoreId()
+
+  const inv = await inventoryRepo.findByProduct(input.product_id, storeId)
   const newQty = (inv?.quantity ?? 0) + input.change_qty
 
-  await inventoryRepo.upsert(input.product_id, newQty)
+  await inventoryRepo.upsert(input.product_id, newQty, storeId)
   await inventoryRepo.insertHistory({
     productId: input.product_id,
+    storeId,
     changeQty: input.change_qty,
     reason: input.reason,
     type: input.type,
@@ -37,5 +41,6 @@ export async function adjustStock(input: AdjustStockInput) {
 }
 
 export async function getInventoryList() {
-  return inventoryRepo.findAll()
+  const storeId = await getAdminStoreId()
+  return inventoryRepo.findAll(storeId)
 }

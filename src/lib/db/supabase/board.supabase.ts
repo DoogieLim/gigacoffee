@@ -11,6 +11,7 @@ export class SupabaseBoardRepository implements BoardRepository {
     category?: PostCategory
     page: number
     limit: number
+    storeId?: string | null
   }): Promise<{ posts: Post[]; total: number }> {
     const supabase = await this.db()
     let query = supabase
@@ -23,28 +24,41 @@ export class SupabaseBoardRepository implements BoardRepository {
 
     if (options.category) query = query.eq("category", options.category)
 
+    // storeId 지정: 해당 매장 게시글 + 전체(NULL) 게시글
+    // storeId 미지정: 전체(NULL) 게시글만
+    if (options.storeId) {
+      query = query.or(`store_id.eq.${options.storeId},store_id.is.null`)
+    } else {
+      query = query.is("store_id", null)
+    }
+
     const { data, count } = await query
     return { posts: (data ?? []) as unknown as Post[], total: count ?? 0 }
   }
 
-  async findAllForAdmin(limit = 50): Promise<Post[]> {
+  async findAllForAdmin(limit = 50, storeId?: string | null): Promise<Post[]> {
     const supabase = await this.db()
-    const { data } = await supabase
+    let query = supabase
       .from("posts")
-      .select("id, title, category, is_hidden, is_pinned, created_at, author:profiles(name)")
+      .select("id, title, category, store_id, is_hidden, is_pinned, created_at, author:profiles(name)")
       .order("created_at", { ascending: false })
       .limit(limit)
+    if (storeId) {
+      query = query.or(`store_id.eq.${storeId},store_id.is.null`)
+    }
+    const { data } = await query
     return (data ?? []) as unknown as Post[]
   }
 
-  async createPost(data: CreatePostInput & { authorId: string }): Promise<Post> {
+  async createPost(data: CreatePostInput & { authorId: string; storeId?: string | null }): Promise<Post> {
     const supabase = await this.db()
-    const { authorId, ...rest } = data
+    const { authorId, storeId, ...rest } = data
     const { data: row, error } = await supabase
       .from("posts")
       .insert({
         ...rest,
         author_id: authorId,
+        store_id: storeId ?? null,
         images: rest.images ?? [],
       })
       .select()

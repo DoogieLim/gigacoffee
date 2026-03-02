@@ -1,13 +1,15 @@
 import { orderRepo, inventoryRepo } from "@/lib/db"
+import { getAdminStoreId } from "@/lib/utils/admin-store"
 import { StatsCard } from "@/components/admin/StatsCard"
 import { LowStockAlert } from "@/components/admin/LowStockAlert"
 import { OrderTable } from "@/components/admin/OrderTable"
 import { formatPrice } from "@/lib/utils/format"
 
 async function getDashboardData() {
+  const storeId = await getAdminStoreId()
   const [todayOrders, inventory] = await Promise.all([
-    orderRepo.findToday(),
-    inventoryRepo.findAll(),
+    orderRepo.findToday(storeId),
+    inventoryRepo.findAll(storeId),
   ])
 
   const todaySales = todayOrders

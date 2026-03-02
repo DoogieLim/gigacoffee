@@ -1,31 +1,68 @@
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
-import { createClient, createServiceClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/server"
+import { roleRepo, storeRepo } from "@/lib/db"
 import { AdminSidebar } from "@/components/layout/AdminSidebar"
 import { ROUTES } from "@/lib/constants/routes"
+import type { AdminStoreContext } from "@/types/store.types"
 
-async function getAdminUser() {
+async function getAdminContext(): Promise<{ context: AdminStoreContext } | null> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return null
 
-  const service = await createServiceClient()
-  const { data } = await service
+  // 권한 확인: franchise_admin(store_id IS NULL) 여부
+  const isFranchiseAdmin = await roleRepo.isFranchiseAdmin(user.id)
+
+  // 관리 가능한 매장 목록
+  const managedStores = isFranchiseAdmin
+    ? await storeRepo.findAll(true) // 전체 활성 매장
+    : await roleRepo.findUserStores(user.id) // 본인 매장만
+
+  // 관리자 역할 검증 (admin / staff / franchise_admin 중 하나 이상)
+  const { data: roleRows } = await supabase
     .from("user_roles")
     .select("role:roles(name)")
     .eq("user_id", user.id)
 
-  const rows = (data ?? []) as unknown as Array<{ role: { name: string } | null }>
-  const roles = rows.map((r) => r.role?.name)
-  const isAdmin = roles.includes("admin") || roles.includes("staff")
-  return isAdmin ? user : null
+  const roles = ((roleRows ?? []) as unknown as Array<{ role: { name: string } | null }>).map(
+    (r) => r.role?.name ?? ""
+  )
+  const isAdmin = roles.some((r) => ["admin", "staff", "franchise_admin"].includes(r))
+  if (!isAdmin) return null
+
+  // 쿠키에서 현재 선택된 매장 ID 읽기
+  const cookieStore = await cookies()
+  const rawStoreId = cookieStore.get("admin_store_id")?.value ?? null
+
+  // franchise_admin은 null("전체") 허용, store_admin은 자신의 매장만 허용
+  let currentStoreId: string | null
+  if (isFranchiseAdmin) {
+    currentStoreId = rawStoreId ?? null
+  } else {
+    currentStoreId =
+      managedStores.find((s) => s.id === rawStoreId)?.id ?? managedStores[0]?.id ?? null
+  }
+
+  const context: AdminStoreContext = {
+    isFranchiseAdmin,
+    currentStoreId,
+    managedStores,
+  }
+
+  return { context }
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = await getAdminUser()
+  const result = await getAdminContext()
 
-  if (!user) {
+  if (!result) {
     redirect(ROUTES.LOGIN)
   }
+
+  const { context } = result
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -35,8 +72,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </div>
 
       {/* 사이드바 */}
-      <div className="hidden lg:flex lg:w-60 lg:flex-shrink-0">
-        <AdminSidebar />
+      <div className="hidden lg:flex lg:w-64 lg:flex-shrink-0">
+        <AdminSidebar context={context} />
       </div>
 
       {/* 메인 콘텐츠 */}
