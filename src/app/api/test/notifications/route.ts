@@ -1,15 +1,31 @@
 /**
- * 알림 테스트 엔드포인트 (개발환경 전용)
- * GET /api/test/notifications?channel=sms|kakao|push|all&phone=010xxx&userId=xxx
+ * GET /api/test/notifications — 알림 채널 테스트 (개발환경 전용)
+ *
+ * SMS, 카카오 알림톡, FCM 웹 푸시 발송이 정상 작동하는지 검증한다.
+ *
+ * **프로덕션 보호:** `NODE_ENV === "production"`이면 즉시 403 반환.
+ * 빌드 시점에 제거되지 않고 런타임 체크를 사용한 이유:
+ * Next.js standalone 빌드에서 tree-shaking으로 라우트 파일이 제거되지 않을 수 있음.
+ *
+ * **Solapi HMAC-SHA256 인증:**
+ * Solapi API는 API Key + Secret으로 서명한 HMAC-SHA256 Authorization 헤더를 요구한다.
+ * `date`: ISO 8601 형식 (밀리초 제거) + `salt`: UUID + `signature`: HMAC(date+salt)
+ *
+ * **FCM 토큰 조회:** fcm_token은 profiles 테이블에 저장된다.
+ * 브라우저에서 /my 페이지 방문 + 알림 권한 허용 시 자동 등록됨.
+ *
+ * 인증: 불필요 (개발환경 전용, 프로덕션에서 403)
+ * OpenAPI 스펙: src/lib/api/openapi.ts → /api/test/notifications GET
  */
 import { NextResponse } from "next/server"
 import { createHmac } from "crypto"
 
-if (process.env.NODE_ENV === "production") {
-  // 프로덕션에서는 비활성화
-}
-
+/**
+ * Solapi HMAC-SHA256 인증 헤더 생성
+ * 형식: `HMAC-SHA256 apiKey=..., date=..., salt=..., signature=...`
+ */
 function getSolapiAuthHeader(): string {
+  // 밀리초(.dddZ)를 제거한 ISO 8601 형식 (Solapi 요구 형식)
   const date = new Date().toISOString().replace(/\.\d{3}Z$/, "Z")
   const salt = crypto.randomUUID()
   const signature = createHmac("sha256", process.env.SOLAPI_API_SECRET!)
