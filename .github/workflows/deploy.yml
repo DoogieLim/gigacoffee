@@ -5,16 +5,50 @@ on:
     branches: [main]
 
 jobs:
-  deploy-vercel:
-    name: Vercel 배포
+  # ── 1단계: 테스트 & 빌드 검증 ──────────────────────────────────────
+  test:
+    name: 테스트 & 빌드 검증
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-      - run: npm ci
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: TypeScript 타입 체크
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Vitest 단위 테스트
+        run: npx vitest run
+
+      - name: 빌드 확인
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_PORTONE_IMP_CODE: ${{ secrets.NEXT_PUBLIC_PORTONE_IMP_CODE }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_VAPID_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+
+  # ── 2단계: Vercel 배포 (테스트 통과 후) ───────────────────────────
+  deploy-vercel:
+    name: Vercel 배포
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Vercel 배포
         uses: amondnet/vercel-action@v25
         with:
@@ -23,8 +57,10 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: "--prod"
 
+  # ── 2단계: Docker 이미지 빌드 & GHCR 푸시 (테스트 통과 후) ────────
   build-and-push-docker:
     name: Docker 이미지 빌드 & GHCR 푸시
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
