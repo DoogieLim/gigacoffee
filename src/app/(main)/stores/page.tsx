@@ -1,6 +1,8 @@
 import { storeRepo } from "@/lib/db"
 import { StoreSelectClient } from "@/components/menu/StoreSelectClient"
 
+export const dynamic = "force-dynamic"
+
 export default async function StoresPage() {
   const stores = await storeRepo.findAll(true) // 활성 매장만
 
