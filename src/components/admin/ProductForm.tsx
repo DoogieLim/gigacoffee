@@ -267,7 +267,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                       type="number"
                       value={choice.price_delta}
                       onChange={(e) => updateChoicePriceDelta(optIdx, choiceIdx, e.target.value)}
-                      placeholder="0"
+                      onFocus={(e) => e.target.select()}
+                      step={500}
+                      min={0}
                       className="w-20 border border-border-warm bg-white px-2 py-1 text-sm text-ink text-right focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand/15"
                     />
                     <span className="text-xs text-ink-muted">원</span>
