@@ -60,6 +60,43 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── 고객 문의 배너 ── */}
+      <section className="px-5 mb-8">
+        <Link
+          href={ROUTES.BOARD_QNA}
+          className="flex items-center gap-4 rounded-2xl bg-white border border-neutral-100 px-5 py-4 shadow-premium active:scale-95 transition-transform"
+        >
+          <div className="h-11 w-11 flex-shrink-0 rounded-xl bg-amber-50 flex items-center justify-center">
+            <svg
+              className="h-5 w-5 text-amber-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+              />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-neutral-900">고객 문의</p>
+            <p className="text-xs text-neutral-500 mt-0.5">궁금한 점을 남겨주세요. 영업일 내 답변드립니다.</p>
+          </div>
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-neutral-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </section>
+
       {/* ── Featured Menu ── */}
       <section className="bg-white rounded-t-[40px] px-5 pt-10 pb-20 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] flex-1">
         <div className="flex items-center justify-between mb-6">

@@ -9,6 +9,7 @@ export const ROUTES = {
   ORDER_CHECKOUT: "/order/checkout",
   ORDER_COMPLETE: "/order/complete",
   BOARD: "/board",
+  BOARD_QNA: "/board/qna",
   MY: "/my",
   MY_ORDERS: "/my/orders",
   MY_PROFILE: "/my/profile",
