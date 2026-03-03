@@ -9,12 +9,14 @@ interface ImageUploaderProps {
   images: string[]
   onChange: (urls: string[]) => void
   maxFiles?: number
+  uploadEndpoint?: string
 }
 
 export function ImageUploader({
   images,
   onChange,
   maxFiles = 5,
+  uploadEndpoint = "/api/posts/upload",
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState<{ [key: string]: boolean }>({})
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -38,7 +40,7 @@ export function ImageUploader({
         const formData = new FormData()
         formData.append("file", file)
 
-        const response = await fetch("/api/posts/upload", {
+        const response = await fetch(uploadEndpoint, {
           method: "POST",
           body: formData,
         })

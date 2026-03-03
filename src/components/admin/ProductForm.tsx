@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Select } from "@/components/ui/Select"
+import { ImageUploader } from "@/components/board/ImageUploader"
 import { createProduct, updateProduct, deleteProduct } from "@/actions/product.actions"
 import type { Product, Category, ProductOption } from "@/types/product.types"
 
@@ -182,12 +183,17 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         required
       />
 
-      <Input
-        label="이미지 URL (선택)"
-        value={imageUrl}
-        onChange={(e) => setImageUrl(e.target.value)}
-        placeholder="https://..."
-      />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium uppercase tracking-widest text-ink-secondary">
+          상품 이미지 (선택)
+        </label>
+        <ImageUploader
+          images={imageUrl ? [imageUrl] : []}
+          onChange={(urls) => setImageUrl(urls[0] ?? "")}
+          maxFiles={1}
+          uploadEndpoint="/api/products/upload"
+        />
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium uppercase tracking-widest text-ink-secondary">
