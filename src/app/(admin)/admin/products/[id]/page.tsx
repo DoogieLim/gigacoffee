@@ -12,8 +12,8 @@ interface Props {
 export default async function EditProductPage({ params }: Props) {
   const { id } = await params
   const [product, categories] = await Promise.all([
-    productRepo.findById(id),
-    productRepo.findCategories(false),
+    productRepo.findById(id).catch((err: unknown) => { console.error("[EditProductPage] findById error:", err); return null }),
+    productRepo.findCategories(false).catch((err: unknown) => { console.error("[EditProductPage] findCategories error:", err); return [] }),
   ])
 
   if (!product) notFound()
