@@ -6,11 +6,12 @@ import { CommentList } from "@/components/board/CommentList"
 import { CommentForm } from "@/components/board/CommentForm"
 
 interface PostPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const post = await getPost(params.id)
+  const { id } = await params
+  const post = await getPost(id)
   if (!post) return {}
 
   return {
@@ -20,7 +21,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPost(params.id)
+  const { id } = await params
+  const post = await getPost(id)
 
   if (!post) {
     notFound()
