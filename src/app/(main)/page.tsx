@@ -1,8 +1,16 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { ROUTES } from "@/lib/constants/routes"
+import { getCurrentUser } from "@/actions/auth.actions"
 
-export default function HomePage() {
+const ADMIN_ROLES = ["admin", "franchise_admin", "staff"]
+
+export default async function HomePage() {
+  const user = await getCurrentUser()
+  if (user?.role && ADMIN_ROLES.includes(user.role)) {
+    redirect(ROUTES.ADMIN)
+  }
   return (
     <div className="flex flex-col bg-neutral-50 min-h-screen">
 
