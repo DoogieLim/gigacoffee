@@ -9,7 +9,7 @@
  * OpenAPI 스펙: src/lib/api/openapi.ts → /api/products/upload POST
  */
 import { NextRequest } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/server"
 import { requireRole } from "@/lib/api/auth"
 import { apiSuccess, apiError } from "@/lib/api/response"
 
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const fileName = `${Date.now()}_${file.name}`
     const filePath = `product-images/${fileName}`
 
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     const { data, error } = await supabase.storage
       .from("products")
       .upload(filePath, buffer, {

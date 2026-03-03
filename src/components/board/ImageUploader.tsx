@@ -9,6 +9,7 @@ interface ImageUploaderProps {
   images: string[]
   onChange: (urls: string[]) => void
   maxFiles?: number
+  maxSizeMB?: number
   uploadEndpoint?: string
 }
 
@@ -16,6 +17,7 @@ export function ImageUploader({
   images,
   onChange,
   maxFiles = 5,
+  maxSizeMB = 10,
   uploadEndpoint = "/api/posts/upload",
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState<{ [key: string]: boolean }>({})
@@ -33,6 +35,10 @@ export function ImageUploader({
 
     // 각 파일 업로드
     for (const file of files) {
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        alert(`파일 크기는 ${maxSizeMB}MB 이하여야 합니다. (${file.name})`)
+        continue
+      }
       const tempKey = `${Date.now()}_${file.name}`
       setUploading((prev) => ({ ...prev, [tempKey]: true }))
 
@@ -78,10 +84,11 @@ export function ImageUploader({
       <div>
         <label
           htmlFor="image-input"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 mb-1"
         >
           이미지 첨부 ({images.length}/{maxFiles})
         </label>
+        <p className="text-xs text-gray-500 mb-2">이미지당 최대 {maxSizeMB}MB</p>
         <input
           ref={fileInputRef}
           id="image-input"

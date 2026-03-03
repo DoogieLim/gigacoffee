@@ -18,8 +18,8 @@ import { createClient } from "@/lib/supabase/server"
 import { requireAuth } from "@/lib/api/auth"
 import { apiSuccess, apiError } from "@/lib/api/response"
 
-// 5MB: Supabase Storage 무료 플랜의 실용적 상한선
-const MAX_FILE_SIZE = 5 * 1024 * 1024
+// 10MB: 게시판 이미지 상한선
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return apiError("파일 크기는 5MB 이하여야 합니다", 400)
+      return apiError("파일 크기는 10MB 이하여야 합니다", 400)
     }
 
     // File → ArrayBuffer 변환 (Supabase Storage SDK가 Buffer/ArrayBuffer를 요구)

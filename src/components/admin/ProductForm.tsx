@@ -191,6 +191,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           images={imageUrl ? [imageUrl] : []}
           onChange={(urls) => setImageUrl(urls[0] ?? "")}
           maxFiles={1}
+          maxSizeMB={5}
           uploadEndpoint="/api/products/upload"
         />
       </div>
