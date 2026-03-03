@@ -5,10 +5,11 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { roleRepo, storeRepo } from "@/lib/db"
 import { AdminSidebar } from "@/components/layout/AdminSidebar"
+import { FcmInitializer, ADMIN_FCM_EVENTS } from "@/components/layout/FcmInitializer"
 import { ROUTES } from "@/lib/constants/routes"
 import type { AdminStoreContext } from "@/types/store.types"
 
-async function getAdminContext(): Promise<{ context: AdminStoreContext } | null> {
+async function getAdminContext(): Promise<{ context: AdminStoreContext; userId: string } | null> {
   const supabase = await createClient()
   const {
     data: { user },
@@ -54,7 +55,7 @@ async function getAdminContext(): Promise<{ context: AdminStoreContext } | null>
     managedStores,
   }
 
-  return { context }
+  return { context, userId: user.id }
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -64,7 +65,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect(ROUTES.LOGIN)
   }
 
-  const { context } = result
+  const { context, userId } = result
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -82,6 +83,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="flex flex-1 flex-col overflow-auto">
         <main className="flex-1 bg-gray-50 p-6">{children}</main>
       </div>
+
+      {/* 관리자 FCM 알림 (신규 주문, 재고 부족) */}
+      <FcmInitializer userId={userId} allowedEvents={ADMIN_FCM_EVENTS} />
     </div>
   )
 }
