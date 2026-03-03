@@ -2,12 +2,17 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import { getPost } from "@/actions/board.actions"
+import { getCurrentUser } from "@/actions/auth.actions"
+import { createClient } from "@/lib/supabase/server"
 import { CommentList } from "@/components/board/CommentList"
 import { CommentForm } from "@/components/board/CommentForm"
+import { PostActions } from "@/components/board/PostActions"
 
 interface PostPageProps {
   params: Promise<{ id: string }>
 }
+
+const ADMIN_ROLES = ["admin", "franchise_admin", "staff"]
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { id } = await params
@@ -22,19 +27,27 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = await params
-  const post = await getPost(id)
+  const [post, supabase, currentUser] = await Promise.all([
+    getPost(id),
+    createClient(),
+    getCurrentUser(),
+  ])
 
   if (!post) {
     notFound()
   }
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const currentUserId = user?.id ?? null
+  const isAdmin = !!(currentUser?.role && ADMIN_ROLES.includes(currentUser.role))
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 게시글 헤더 */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          {/* 카테고리 배지 */}
-          <div className="mb-4">
+          {/* 카테고리 + 수정/삭제 버튼 */}
+          <div className="flex items-center justify-between mb-4">
             <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
               {post.category === "notice"
                 ? "공지"
@@ -44,6 +57,12 @@ export default async function PostPage({ params }: PostPageProps) {
                     ? "후기"
                     : "자유글"}
             </span>
+            <PostActions
+              postId={post.id}
+              authorId={post.author_id}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+            />
           </div>
 
           {/* 제목 */}

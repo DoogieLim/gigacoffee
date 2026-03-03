@@ -39,3 +39,15 @@ export interface CreateCommentInput {
   content: string
   images?: string[]
 }
+
+export interface UpdatePostInput {
+  title?: string
+  content?: string
+  category?: PostCategory
+  images?: string[]
+}
+
+export interface UpdateCommentInput {
+  content?: string
+  images?: string[]
+}

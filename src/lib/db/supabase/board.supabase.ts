@@ -1,6 +1,6 @@
 import { createServiceClient } from "@/lib/supabase/server"
 import type { BoardRepository } from "../repositories/board.repository"
-import type { Post, PostCategory, CreatePostInput, Comment, CreateCommentInput } from "@/types/board.types"
+import type { Post, PostCategory, CreatePostInput, Comment, CreateCommentInput, UpdatePostInput, UpdateCommentInput } from "@/types/board.types"
 
 export class SupabaseBoardRepository implements BoardRepository {
   private async db() {
@@ -122,5 +122,53 @@ export class SupabaseBoardRepository implements BoardRepository {
       .single()
     if (error) throw new Error("댓글 작성에 실패했습니다.")
     return row as unknown as Comment
+  }
+
+  async updatePost(id: string, data: UpdatePostInput, userId: string, isAdmin: boolean): Promise<Post> {
+    const supabase = await this.db()
+    const { data: post } = await supabase.from("posts").select("author_id").eq("id", id).single()
+    if (!post) throw new Error("게시글을 찾을 수 없습니다.")
+    if (!isAdmin && post.author_id !== userId) throw new Error("수정 권한이 없습니다.")
+    const { data: row, error } = await supabase
+      .from("posts")
+      .update({ ...data, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select("*, author:profiles(name, avatar_url)")
+      .single()
+    if (error) throw new Error("게시글 수정에 실패했습니다.")
+    return row as unknown as Post
+  }
+
+  async deletePost(id: string, userId: string, isAdmin: boolean): Promise<void> {
+    const supabase = await this.db()
+    const { data: post } = await supabase.from("posts").select("author_id").eq("id", id).single()
+    if (!post) throw new Error("게시글을 찾을 수 없습니다.")
+    if (!isAdmin && post.author_id !== userId) throw new Error("삭제 권한이 없습니다.")
+    const { error } = await supabase.from("posts").delete().eq("id", id)
+    if (error) throw new Error("게시글 삭제에 실패했습니다.")
+  }
+
+  async updateComment(id: string, data: UpdateCommentInput, userId: string): Promise<Comment> {
+    const supabase = await this.db()
+    const { data: comment } = await supabase.from("comments").select("author_id").eq("id", id).single()
+    if (!comment) throw new Error("댓글을 찾을 수 없습니다.")
+    if (comment.author_id !== userId) throw new Error("수정 권한이 없습니다.")
+    const { data: row, error } = await supabase
+      .from("comments")
+      .update(data)
+      .eq("id", id)
+      .select("*, author:profiles(name, avatar_url)")
+      .single()
+    if (error) throw new Error("댓글 수정에 실패했습니다.")
+    return row as unknown as Comment
+  }
+
+  async deleteComment(id: string, userId: string, isAdmin: boolean): Promise<void> {
+    const supabase = await this.db()
+    const { data: comment } = await supabase.from("comments").select("author_id").eq("id", id).single()
+    if (!comment) throw new Error("댓글을 찾을 수 없습니다.")
+    if (!isAdmin && comment.author_id !== userId) throw new Error("삭제 권한이 없습니다.")
+    const { error } = await supabase.from("comments").delete().eq("id", id)
+    if (error) throw new Error("댓글 삭제에 실패했습니다.")
   }
 }
