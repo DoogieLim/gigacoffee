@@ -23,15 +23,17 @@ async function requireAdmin() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("인증이 필요합니다.")
 
-  const { data: roleData } = await supabase
-    .from("roles")
-    .select("role")
+  const { data: roleRows } = await supabase
+    .from("user_roles")
+    .select("role:roles(name)")
     .eq("user_id", user.id)
-    .single()
 
-  type RoleData = { role: string }
-  const role = (roleData as unknown as RoleData | null)?.role
-  if (!role || !["admin", "staff"].includes(role)) throw new Error("권한이 없습니다.")
+  const roles = ((roleRows ?? []) as unknown as Array<{ role: { name: string } | null }>)
+    .map((r) => r.role?.name ?? "")
+
+  if (!roles.some((r) => ["admin", "staff", "franchise_admin"].includes(r))) {
+    throw new Error("권한이 없습니다.")
+  }
 }
 
 /** 임베딩 생성 후 저장 (실패해도 상품 저장은 유지) */
