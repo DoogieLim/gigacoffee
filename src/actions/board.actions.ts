@@ -4,6 +4,7 @@ import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { boardRepo } from "@/lib/db"
 import { getAdminStoreId } from "@/lib/utils/admin-store"
+import { requireAdminAction } from "@/lib/auth/action-auth"
 import type { CreatePostInput, PostCategory, CreateCommentInput } from "@/types/board.types"
 
 // 사용자 쿠키에서 선택된 매장 ID 읽기
@@ -43,11 +44,7 @@ export async function getPost(id: string) {
 }
 
 export async function createComment(postId: string, input: CreateCommentInput) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error("로그인이 필요합니다.")
-
-  return boardRepo.createComment({ ...input, postId, authorId: user.id })
+  // 댓글은 관리자(admin/staff/franchise_admin)만 작성 가능
+  const userId = await requireAdminAction()
+  return boardRepo.createComment({ ...input, postId, authorId: userId })
 }

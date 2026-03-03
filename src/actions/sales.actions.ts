@@ -2,10 +2,12 @@
 
 import { orderRepo } from "@/lib/db"
 import { getAdminStoreId } from "@/lib/utils/admin-store"
+import { requireAdminAction } from "@/lib/auth/action-auth"
 
 export type Period = "today" | "week" | "month"
 
 export async function getSalesData(period: Period) {
+  await requireAdminAction()
   const storeId = await getAdminStoreId()
 
   const now = new Date()

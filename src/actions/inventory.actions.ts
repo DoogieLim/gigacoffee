@@ -1,17 +1,13 @@
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
 import { inventoryRepo, productRepo } from "@/lib/db"
 import { dispatch } from "@/lib/notifications/dispatcher"
 import { getAdminStoreId } from "@/lib/utils/admin-store"
+import { requireAdminAction } from "@/lib/auth/action-auth"
 import type { AdjustStockInput } from "@/types/inventory.types"
 
 export async function adjustStock(input: AdjustStockInput) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error("로그인이 필요합니다.")
+  const userId = await requireAdminAction()
 
   const storeId = await getAdminStoreId()
 
@@ -25,13 +21,13 @@ export async function adjustStock(input: AdjustStockInput) {
     changeQty: input.change_qty,
     reason: input.reason,
     type: input.type,
-    createdBy: user.id,
+    createdBy: userId,
   })
 
   if (inv && newQty <= inv.low_stock_threshold) {
     const product = await productRepo.findById(input.product_id)
     await dispatch({
-      recipientId: user.id,
+      recipientId: userId,
       eventType: "LOW_STOCK",
       templateData: { productName: product?.name ?? "상품", quantity: String(newQty) },
     }).catch(console.error)

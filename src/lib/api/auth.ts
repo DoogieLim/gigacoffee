@@ -95,18 +95,16 @@ export async function requireRole(
   const user = await requireAuth(request)
   const supabase = await createClient()
 
-  const { data: roleData } = await supabase
-    .from("roles")
-    .select("role")
+  const { data: roleRows } = await supabase
+    .from("user_roles")
+    .select("role:roles(name)")
     .eq("user_id", user.id)
-    .single()
 
-  // TypeScript 타입 캐스팅: Supabase 자동 생성 타입과 실제 반환 타입 불일치로 인한 우회
-  // roles 테이블의 스키마: { user_id: uuid, role: text }
-  type RoleData = { role: string }
-  const userRole = (roleData as unknown as RoleData | null)?.role
+  const userRoles = ((roleRows ?? []) as unknown as Array<{ role: { name: string } | null }>)
+    .map((r) => r.role?.name ?? "")
+    .filter(Boolean)
 
-  if (!userRole || !roles.includes(userRole)) {
+  if (!userRoles.some((r) => roles.includes(r))) {
     throw apiError("권한이 없습니다", 403)
   }
 

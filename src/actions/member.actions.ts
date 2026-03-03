@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { memberRepo } from "@/lib/db"
+import { requireAdminAction } from "@/lib/auth/action-auth"
 
 export async function getMyProfile() {
   const supabase = await createClient()
@@ -22,5 +23,6 @@ export async function updateMyProfile(data: { name: string; phone: string }) {
 }
 
 export async function getAllMembers() {
+  await requireAdminAction()
   return memberRepo.findAll()
 }

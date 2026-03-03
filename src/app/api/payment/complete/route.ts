@@ -12,15 +12,24 @@
  * - DB 저장 실패 → PortOne 자동 취소
  * 알림 발송 실패는 주문 완료에 영향을 주지 않는다 (fire-and-forget).
  *
- * 인증: 불필요 (paymentId + order_id로 검증)
+ * 인증: 로그인 필수 + 주문 소유자 검증 (본인 결제만 완료 가능)
  * OpenAPI 스펙: src/lib/api/openapi.ts → /api/payment/complete POST
  */
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { verifyPayment, cancelPayment } from "@/lib/portone/server"
 import { orderRepo, paymentRepo } from "@/lib/db"
 import { dispatch, dispatchNewOrderToAdmin } from "@/lib/notifications/dispatcher"
+import { createClient } from "@/lib/supabase/server"
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // 인증 확인: 로그인한 사용자만 결제 완료 가능
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 })
+  }
   // paymentId를 외부 스코프에서 선언: catch 블록에서 자동 취소 시 접근 필요
   let paymentId: string | undefined
 
@@ -41,6 +50,11 @@ export async function POST(request: Request) {
 
     // 2) 주문 금액 vs PortOne 결제 금액 비교 (가격 조작 방지)
     const order = await orderRepo.findById(order_id)
+    // 소유자 검증: 본인 주문만 결제 완료 가능
+    if (order && order.user_id !== user.id) {
+      await cancelPayment(paymentId!, "주문 소유자 불일치로 인한 자동 취소").catch(console.error)
+      return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 })
+    }
     if (!order || order.total_amount !== payment.amount.total) {
       // 결제는 됐지만 금액 불일치 → PortOne 자동 취소로 결제금 환원
       await cancelPayment(paymentId!, "주문 금액 불일치로 인한 자동 취소").catch(console.error)
