@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { ROUTES } from "@/lib/constants/routes"
 
@@ -57,8 +59,17 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-white/30">
-          © 2026 GigaCoffee. All rights reserved.
+        <div className="mt-12 border-t border-white/10 pt-8 flex items-center justify-between text-xs text-white/30">
+          <span>© 2026 GigaCoffee. All rights reserved.</span>
+          <button
+            onClick={() => {
+              document.cookie = "app_mode=;path=/;max-age=0"
+              window.location.href = "/"
+            }}
+            className="text-white/30 hover:text-white/60 transition-colors"
+          >
+            모드 변경
+          </button>
         </div>
       </div>
     </footer>

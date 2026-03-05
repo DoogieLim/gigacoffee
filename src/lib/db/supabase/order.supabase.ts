@@ -6,7 +6,7 @@ import type {
   OrderWithItems,
   SalesOrderRow,
 } from "../repositories/order.repository"
-import type { Order, OrderStatus } from "@/types/order.types"
+import type { Order, OrderStatus, DeliveryStatus } from "@/types/order.types"
 
 export class SupabaseOrderRepository implements OrderRepository {
   private async db() {
@@ -124,5 +124,30 @@ export class SupabaseOrderRepository implements OrderRepository {
       .single()
     if (error || !data) throw new Error("주문 상태 변경에 실패했습니다.")
     return data as unknown as Order
+  }
+
+  async updateDeliveryStatus(orderId: string, deliveryStatus: DeliveryStatus, pin?: string): Promise<Order> {
+    const supabase = await this.db()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: Record<string, any> = { delivery_status: deliveryStatus }
+    if (pin !== undefined) updateData.robot_pin = pin
+    const { data, error } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId)
+      .select()
+      .single()
+    if (error || !data) throw new Error("배달 상태 변경에 실패했습니다.")
+    return data as unknown as Order
+  }
+
+  async findFullById(id: string): Promise<Order | null> {
+    const supabase = await this.db()
+    const { data } = await supabase
+      .from("orders")
+      .select("*, order_items(id, product_name, quantity, options, line_total)")
+      .eq("id", id)
+      .single()
+    return (data as unknown as Order) ?? null
   }
 }

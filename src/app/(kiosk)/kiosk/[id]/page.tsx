@@ -56,7 +56,7 @@ export default function KioskProductPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[80vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-tech border-t-transparent" />
       </div>
     )
   }
@@ -65,7 +65,7 @@ export default function KioskProductPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-8">
-      <button onClick={() => router.back()} className="mb-6 text-sm text-gray-400 hover:text-amber-400">
+      <button onClick={() => router.back()} className="mb-6 text-sm text-gray-400 hover:text-tech">
         ← 뒤로
       </button>
 
@@ -99,8 +99,8 @@ export default function KioskProductPage() {
                           onClick={() => setSelectedOptions((prev) => ({ ...prev, [opt.name]: choice.label }))}
                           className={`rounded-xl px-6 py-3 text-base font-bold transition-all active:scale-95 ${
                             selected
-                              ? "bg-amber-500 text-gray-900"
-                              : "border border-gray-600 text-gray-300 hover:border-amber-400"
+                              ? "bg-tech text-white"
+                              : "border border-gray-600 text-gray-300 hover:border-tech"
                           }`}
                         >
                           {choice.label}
@@ -119,7 +119,7 @@ export default function KioskProductPage() {
           )}
 
           <div className="mt-8 border-t border-gray-700 pt-6">
-            <p className="text-4xl font-bold text-amber-400">{formatPrice(product.price + optionTotal)}</p>
+            <p className="text-4xl font-bold text-tech">{formatPrice(product.price + optionTotal)}</p>
           </div>
 
           {/* 수량 */}
@@ -135,7 +135,7 @@ export default function KioskProductPage() {
           <button
             onClick={handleAddToCart}
             disabled={!product.is_available}
-            className="mt-8 w-full rounded-2xl bg-amber-500 py-5 text-xl font-bold text-gray-900 transition-colors hover:bg-amber-400 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
+            className="mt-8 w-full rounded-2xl bg-tech py-5 text-xl font-bold text-white transition-colors hover:bg-tech/90 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
           >
             담기
           </button>

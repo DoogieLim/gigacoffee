@@ -36,7 +36,7 @@ export default function KioskMenuPage() {
         <button
           onClick={() => setSelectedCategory(null)}
           className={`shrink-0 rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
-            !selectedCategory ? "bg-amber-500 text-gray-900" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            !selectedCategory ? "bg-tech text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
           }`}
         >
           전체
@@ -47,7 +47,7 @@ export default function KioskMenuPage() {
             onClick={() => setSelectedCategory(cat.id)}
             className={`shrink-0 rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
               selectedCategory === cat.id
-                ? "bg-amber-500 text-gray-900"
+                ? "bg-tech text-white"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
           >
@@ -60,7 +60,7 @@ export default function KioskMenuPage() {
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-tech border-t-transparent" />
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
@@ -68,7 +68,7 @@ export default function KioskMenuPage() {
               <button
                 key={product.id}
                 onClick={() => router.push(`/kiosk/${product.id}`)}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 transition-all hover:border-amber-400 hover:shadow-lg hover:shadow-amber-900/20 active:scale-95"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 transition-all hover:border-tech hover:shadow-lg hover:shadow-blue-900/20 active:scale-95"
               >
                 <div className="flex aspect-square items-center justify-center bg-gray-800 text-5xl">
                   {product.image_url ? (
@@ -83,7 +83,7 @@ export default function KioskMenuPage() {
                 </div>
                 <div className="p-3 text-left">
                   <p className="truncate text-sm font-semibold text-white">{product.name}</p>
-                  <p className="mt-1 text-sm font-bold text-amber-400">{formatPrice(product.price)}</p>
+                  <p className="mt-1 text-sm font-bold text-tech">{formatPrice(product.price)}</p>
                 </div>
               </button>
             ))}
@@ -96,9 +96,9 @@ export default function KioskMenuPage() {
         <div className="border-t border-gray-800 bg-gray-900 p-4">
           <button
             onClick={() => router.push("/kiosk/checkout")}
-            className="flex w-full items-center justify-between rounded-2xl bg-amber-500 px-6 py-4 text-gray-900 transition-colors hover:bg-amber-400 active:scale-95"
+            className="flex w-full items-center justify-between rounded-2xl bg-tech px-6 py-4 text-white transition-colors hover:bg-tech/90 active:scale-95"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-amber-400">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-tech">
               {cartItemCount}
             </span>
             <span className="text-lg font-bold">장바구니 확인</span>

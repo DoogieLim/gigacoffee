@@ -42,8 +42,8 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-900">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
-          <p className="mt-4 font-bold text-amber-400">GIGACʘFFEE</p>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-tech border-t-transparent" />
+          <p className="mt-4 font-bold text-tech">GIGACʘFFEE</p>
           <p className="mt-1 text-sm text-gray-400">시스템 초기화 중...</p>
         </div>
       </div>

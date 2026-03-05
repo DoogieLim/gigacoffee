@@ -17,7 +17,7 @@ export function CategoryFilter({ categories, selectedId, onSelect }: CategoryFil
         className={cn(
           "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors",
           selectedId === null
-            ? "bg-amber-700 text-white"
+            ? "bg-brand text-white"
             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
         )}
       >
@@ -30,7 +30,7 @@ export function CategoryFilter({ categories, selectedId, onSelect }: CategoryFil
           className={cn(
             "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors",
             selectedId === cat.id
-              ? "bg-amber-700 text-white"
+              ? "bg-brand text-white"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           )}
         >

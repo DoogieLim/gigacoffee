@@ -1,4 +1,4 @@
-import type { Order, OrderStatus, DeliveryType, DeliveryAddress } from "@/types/order.types"
+import type { Order, OrderStatus, DeliveryStatus, DeliveryType, DeliveryAddress } from "@/types/order.types"
 import type { Json } from "@/types/database.types"
 
 export interface CreateOrderData {
@@ -40,4 +40,6 @@ export interface OrderRepository {
   findToday(storeId?: string | null): Promise<Order[]>
   findForSales(from: Date, storeId?: string | null): Promise<SalesOrderRow[]>
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>
+  updateDeliveryStatus(orderId: string, deliveryStatus: DeliveryStatus, pin?: string): Promise<Order>
+  findFullById(id: string): Promise<Order | null>
 }

@@ -17,6 +17,7 @@ const navItems = [
   { href: ROUTES.ADMIN_BOARD, label: "게시판 관리" },
   { href: ROUTES.ADMIN_ROLES, label: "권한 관리" },
   { href: ROUTES.ADMIN_DELIVERY, label: "배달 설정" },
+  { href: ROUTES.ADMIN_DELIVERY_SIM, label: "배달 시뮬레이터" },
 ]
 
 interface AdminSidebarProps {

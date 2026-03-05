@@ -91,7 +91,7 @@ export default function KioskCheckoutPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-8">
-      <button onClick={() => router.back()} className="mb-6 text-sm text-gray-400 hover:text-amber-400">
+      <button onClick={() => router.back()} className="mb-6 text-sm text-gray-400 hover:text-tech">
         ← 메뉴로
       </button>
 
@@ -110,7 +110,7 @@ export default function KioskCheckoutPage() {
                   onClick={() => setOrderType(option.type)}
                   className={`flex flex-col items-center justify-center rounded-2xl border-2 py-8 transition-all active:scale-95 ${
                     selected
-                      ? "border-amber-400 bg-amber-400/10 text-amber-400"
+                      ? "border-tech bg-tech/10 text-tech"
                       : "border-gray-700 text-gray-400 hover:border-gray-500"
                   }`}
                 >
@@ -145,7 +145,7 @@ export default function KioskCheckoutPage() {
           <div className="mt-4 border-t border-gray-700 pt-4">
             <div className="flex justify-between text-xl font-bold">
               <span className="text-gray-300">합계</span>
-              <span className="text-amber-400">{formatPrice(itemTotal)}</span>
+              <span className="text-tech">{formatPrice(itemTotal)}</span>
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function KioskCheckoutPage() {
                   onClick={() => setPayMethod(method)}
                   className={`flex flex-col items-center justify-center rounded-2xl border-2 py-6 transition-all active:scale-95 ${
                     selected
-                      ? "border-amber-400 bg-amber-400/10 text-amber-400"
+                      ? "border-tech bg-tech/10 text-tech"
                       : "border-gray-700 text-gray-400 hover:border-gray-500"
                   }`}
                 >
@@ -182,14 +182,14 @@ export default function KioskCheckoutPage() {
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             placeholder="예) 얼음 많이, 설탕 적게"
-            className="w-full rounded-xl border border-gray-600 bg-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:border-amber-400 focus:outline-none"
+            className="w-full rounded-xl border border-gray-600 bg-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:border-tech focus:outline-none"
           />
         </div>
 
         <button
           onClick={handleOrder}
           disabled={isLoading}
-          className="inline-flex w-full items-center justify-center rounded-2xl bg-amber-500 py-6 text-2xl font-bold text-gray-900 transition-colors hover:bg-amber-400 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
+          className="inline-flex w-full items-center justify-center rounded-2xl bg-tech py-6 text-2xl font-bold text-white transition-colors hover:bg-tech/90 disabled:bg-gray-700 disabled:text-gray-500 active:scale-95"
         >
           {isLoading ? (
             <>

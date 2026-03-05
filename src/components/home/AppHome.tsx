@@ -1,0 +1,137 @@
+import Link from "next/link"
+import { Button } from "@/components/ui/Button"
+import { ROUTES } from "@/lib/constants/routes"
+
+interface AppHomeProps {
+  mode: "phone" | "web"
+}
+
+export function AppHome({ mode }: AppHomeProps) {
+  const isWeb = mode === "web"
+
+  return (
+    <div className={`flex flex-col bg-neutral-50 min-h-screen ${isWeb ? "max-w-5xl mx-auto" : ""}`}>
+
+      {/* App Header Hero */}
+      <section className={`px-5 pt-8 pb-6 ${isWeb ? "px-8 pt-12 pb-8" : ""}`}>
+        <h2 className="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-1">Welcome back</h2>
+        <h1 className={`font-black text-brand tracking-tighter ${isWeb ? "text-4xl" : "text-3xl"}`}>
+          기다림 없는<br />
+          <span className="text-tech italic">로봇 배송</span> 서비스
+        </h1>
+      </section>
+
+      {/* Robot Delivery Status Card */}
+      <section className={`mb-8 ${isWeb ? "px-8" : "px-5"}`}>
+        <div className="relative overflow-hidden rounded-3xl bg-brand p-6 text-white shadow-premium">
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="flex h-2 w-2 rounded-full bg-tech animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-tech">System Active</span>
+            </div>
+            <h3 className="text-xl font-bold mb-2">로봇 배송이 가능합니다</h3>
+            <p className="text-xs text-white/60 leading-relaxed mb-6">
+              현재 내 위치까지 배송 가능한 로봇이<br />
+              3대 대기 중입니다.
+            </p>
+            <Link href={ROUTES.MENU}>
+              <Button className={`bg-white text-brand font-bold rounded-2xl h-12 hover:bg-neutral-100 active:scale-95 transition-transform ${isWeb ? "w-auto px-12" : "w-full"}`}>
+                지금 주문하기
+              </Button>
+            </Link>
+          </div>
+          <div className="absolute -right-4 -bottom-4 text-9xl opacity-10 rotate-12">{"\uD83E\uDD16"}</div>
+        </div>
+      </section>
+
+      {/* Quick Actions */}
+      <section className={`grid grid-cols-2 gap-4 mb-10 ${isWeb ? "px-8 grid-cols-4" : "px-5"}`}>
+        <Link href={ROUTES.MY_ORDERS} className="rounded-3xl bg-white p-5 shadow-premium border border-neutral-100 flex flex-col items-center text-center active:scale-95 transition-transform">
+          <div className="h-12 w-12 rounded-2xl bg-accent-muted text-accent flex items-center justify-center mb-3">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span className="text-xs font-bold text-neutral-800">최근 주문</span>
+        </Link>
+        <div className="rounded-3xl bg-white p-5 shadow-premium border border-neutral-100 flex flex-col items-center text-center active:scale-95 transition-transform">
+          <div className="h-12 w-12 rounded-2xl bg-tech/10 text-tech flex items-center justify-center mb-3">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <span className="text-xs font-bold text-neutral-800">로봇 위치</span>
+        </div>
+        {isWeb && (
+          <>
+            <Link href={ROUTES.STORES} className="rounded-3xl bg-white p-5 shadow-premium border border-neutral-100 flex flex-col items-center text-center active:scale-95 transition-transform">
+              <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mb-3">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016A3.001 3.001 0 0021 9.349m-18 0a2.999 2.999 0 00.621-1.838L4.25 4.5h15.5l.63 3.01a2.999 2.999 0 00.621 1.839" />
+                </svg>
+              </div>
+              <span className="text-xs font-bold text-neutral-800">매장 찾기</span>
+            </Link>
+            <Link href={ROUTES.BOARD} className="rounded-3xl bg-white p-5 shadow-premium border border-neutral-100 flex flex-col items-center text-center active:scale-95 transition-transform">
+              <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center mb-3">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                </svg>
+              </div>
+              <span className="text-xs font-bold text-neutral-800">게시판</span>
+            </Link>
+          </>
+        )}
+      </section>
+
+      {/* 고객 문의 배너 */}
+      <section className={`mb-8 ${isWeb ? "px-8" : "px-5"}`}>
+        <Link
+          href={ROUTES.BOARD_QNA}
+          className="flex items-center gap-4 rounded-2xl bg-white border border-neutral-100 px-5 py-4 shadow-premium active:scale-95 transition-transform"
+        >
+          <div className="h-11 w-11 flex-shrink-0 rounded-xl bg-amber-50 flex items-center justify-center">
+            <svg className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-neutral-900">고객 문의</p>
+            <p className="text-xs text-neutral-500 mt-0.5">궁금한 점을 남겨주세요. 영업일 내 답변드립니다.</p>
+          </div>
+          <svg className="h-4 w-4 flex-shrink-0 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </section>
+
+      {/* Featured Menu */}
+      <section className="bg-white rounded-t-[40px] px-5 pt-10 pb-20 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] flex-1">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-neutral-900">추천 메뉴</h2>
+          <Link href={ROUTES.MENU} className="text-xs font-bold text-tech">전체보기</Link>
+        </div>
+        <div className={`${isWeb ? "grid grid-cols-3 gap-4" : "space-y-4"}`}>
+          {[
+            { name: "시그니처 로봇 라떼", price: "4,500", desc: "기술의 정점으로 내린 고소한 라떼", icon: "\u2615" },
+            { name: "블루 에너지 에이드", price: "5,200", desc: "시원한 파란색 탄산 에너지", icon: "\uD83C\uDF79" },
+            { name: "메카 쿠키 세트", price: "3,800", desc: "바삭하고 달콤한 로봇 모양 쿠키", icon: "\uD83C\uDF6A" },
+          ].map((item, i) => (
+            <div key={i} className={`flex items-center gap-4 hover:bg-neutral-50 rounded-xl transition-colors p-2 ${isWeb ? "flex-col text-center border border-neutral-100 rounded-2xl p-6" : "border-b border-neutral-50 pb-4 last:border-0"}`}>
+              <div className={`rounded-2xl bg-neutral-100 flex items-center justify-center text-2xl ${isWeb ? "h-20 w-20" : "h-14 w-14"}`}>
+                {item.icon}
+              </div>
+              <div className={isWeb ? "" : "flex-1"}>
+                <h4 className="text-sm font-bold text-neutral-900">{item.name}</h4>
+                <p className="text-[10px] text-neutral-500">{item.desc}</p>
+                {isWeb && <p className="text-sm font-black text-brand mt-2">{"\u20A9"}{item.price}</p>}
+              </div>
+              {!isWeb && <span className="text-sm font-black text-brand">{"\u20A9"}{item.price}</span>}
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}

@@ -21,7 +21,7 @@ export default function KioskCompletePage() {
         <p className="mt-8 text-sm text-gray-600">5초 후 메뉴 화면으로 돌아갑니다...</p>
         <button
           onClick={() => router.push("/kiosk")}
-          className="mt-6 rounded-xl bg-amber-500 px-8 py-3 font-bold text-gray-900 hover:bg-amber-400"
+          className="mt-6 rounded-xl bg-tech px-8 py-3 font-bold text-white hover:bg-tech/90"
         >
           처음으로
         </button>
