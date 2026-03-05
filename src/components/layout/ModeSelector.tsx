@@ -47,15 +47,6 @@ const modes: { key: Mode; label: string; desc: string; icon: React.ReactNode }[]
 export function ModeSelector() {
   const router = useRouter()
 
-  function selectMode(mode: Mode) {
-    document.cookie = `app_mode=${mode};path=/;max-age=${60 * 60 * 24 * 365}`
-    if (mode === "kiosk") {
-      router.push("/kiosk")
-    } else {
-      router.refresh()
-    }
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-brand to-neutral-900 px-6 py-12">
       {/* 로고 */}
@@ -72,7 +63,14 @@ export function ModeSelector() {
         {modes.map((mode) => (
           <button
             key={mode.key}
-            onClick={() => selectMode(mode.key)}
+            onClick={() => {
+              document.cookie = `app_mode=${mode.key};path=/;max-age=${60 * 60 * 24 * 365}`
+              if (mode.key === "kiosk") {
+                router.push("/kiosk")
+              } else {
+                router.refresh()
+              }
+            }}
             className="group flex flex-col items-center rounded-3xl border-2 border-white/10 bg-white/5 px-6 py-8 text-center transition-all hover:border-tech hover:bg-white/10 hover:shadow-glow active:scale-95"
           >
             <div className="mb-4 text-neutral-400 transition-colors group-hover:text-tech">
